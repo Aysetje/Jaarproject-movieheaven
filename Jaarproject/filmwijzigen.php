@@ -132,13 +132,26 @@ textarea {
     min-height: 120px;
 }
 
+button {
+    
+    background-color: #9A66B8;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 8px;
+    padding: 14px;
+    transition: background-color 0.3s ease;
+    
+}
 
-
-
-
-
-
-
+button:hover {
+    background-color: #7C4D9D; 
+}
+header {
+    border-bottom: none !important; 
+    box-shadow: none !important; 
+}
 
      </style>
 
