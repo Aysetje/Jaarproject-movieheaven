@@ -9,16 +9,30 @@ if ((isset($_POST["verzenden"])) && (isset($_POST["naam"])) && ($_POST["naam"] !
     else {
        
 
+        $foto = 'placeholder.jpg'; 
 
-
-
-
-
-
-
-
-
-
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+            
+            $target_dir = "uploads/";
+            $target_file = $target_dir . basename($_FILES["foto"]["name"]);
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        
+            
+            if (in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+                
+                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+                    $foto = basename($_FILES["foto"]["name"]);
+                } else {
+                    
+                    echo "Er is een fout bij het uploaden van de afbeelding.";
+                }
+            } else {
+                echo "Alleen afbeeldingen zijn toegestaan.";
+            }
+        } else {
+            
+            $foto = 'placeholder.jpg';
+        }
 
 
         $sql = "INSERT INTO tblproducten (titel, omschrijving, prijs, categorieid, foto, beoordeling, aantalinvoorraad) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -227,7 +241,7 @@ header {
 
 
 
-        
+
 
         <label>Afbeelding:</label>
         <input type="file" id="foto" name="foto" accept="image/*"><br>
