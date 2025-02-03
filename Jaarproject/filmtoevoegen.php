@@ -234,11 +234,12 @@ header {
 
         <br>
         <label>Categorie:</label>
+        <select id="categorieid" name="categorieid" required>
+            <?php foreach ($categories as $id => $category): ?>
+                <option value="<?= $id ?>"><?= $category ?></option>
+            <?php endforeach; ?>
+        </select><br>
         
-        
-
-
-
 
 
 

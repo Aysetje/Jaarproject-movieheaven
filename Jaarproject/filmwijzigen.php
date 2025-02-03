@@ -258,15 +258,24 @@ header {
 
 
 
+    <label>Omschrijving:</label>
+
+    <textarea id="omschrijving" name="omschrijving" required><?php echo htmlspecialchars($omschrijving); ?></textarea><br>
 
 
 
+    <label>Prijs:</label>
+    <input type="number" id="prijs" name="prijs" value="<?php echo htmlspecialchars($prijs); ?>" required><br>
 
-
-
-
-
-
+    <label >Categorie:</label>
+    <select id="categorieid" name="categorieid" required>
+        <?php
+        foreach ($categories as $key => $value) {
+            $selected = ($key == $categorieid) ? 'selected' : '';
+            echo "<option value='$key' $selected>$value</option>";
+        }
+        ?>
+    </select><br>
 
 
     <label>Foto:</label>
