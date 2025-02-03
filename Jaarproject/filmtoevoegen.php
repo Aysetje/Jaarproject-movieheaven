@@ -235,14 +235,14 @@ header {
         <br>
         <label>Categorie:</label>
         <select id="categorieid" name="categorieid" required>
-            <?php foreach ($categories as $id => $category): ?>
-                <option value="<?= $id ?>"><?= $category ?></option>
-            <?php endforeach; ?>
+            <?php
+            foreach ($categories as $key => $value) {
+                $selected = ($key == $categorieid) ? 'selected' : '';
+                echo "<option value='$key' $selected>$value</option>";
+            }
+            ?>
         </select><br>
         
-
-
-
 
         <label>Afbeelding:</label>
         <input type="file" id="foto" name="foto" accept="image/*"><br>

@@ -32,7 +32,6 @@ if ((isset($_POST["verzenden"])) && isset($_POST["productid"]) && $_POST["produc
 
 
 
-
         $sql = "UPDATE tblproducten 
                 SET titel = ?, omschrijving = ?, prijs = ?, categorieid = ?, foto = ?, beoordeling = ?, aantalinvoorraad = ? 
                 WHERE productid = ?";
@@ -67,24 +66,41 @@ if ((isset($_POST["verzenden"])) && isset($_POST["productid"]) && $_POST["produc
     }
 }
 
+if (isset($_GET['id'])) {
+    $productid = $_GET['id'];
 
+    $mysqli = new MySQLi("localhost", "root", "", "movieheavenphp");
 
+    if (mysqli_connect_errno()) {
+        trigger_error('Fout bij verbinding: ' . $mysqli->error);
+    } else {
+        $sql = "SELECT * FROM tblproducten WHERE productid = ?";
+        if ($stmt = $mysqli->prepare($sql)) {
+            $stmt->bind_param('i', $productid);
+            $stmt->execute();
+            $stmt->bind_result($id, $titel, $omschrijving, $prijs, $categorieid, $foto, $beoordeling, $aantalinvoorraad);
+            $stmt->fetch();
+            $stmt->close();
+        } else {
+            echo 'Fout bij het ophalen van filmgegevens: ' . $mysqli->error;
+        }
+    }
+} else {
+    echo "Geen productid opgegeven.";
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+$categories = [
+    1 => 'Actie',
+    2 => 'Drama',
+    3 => 'Horror',
+    4 => 'Mysterie',
+    5 => 'Komedie',
+    6 => 'Fantasie',
+    7 => 'Romantiek',
+    8 => 'Thriller',
+    9 => 'Science Fiction',
+    10 => 'Avontuur'
+];
 
 
 ?>
@@ -243,19 +259,6 @@ header {
     
     <label >Titel:</label>
     <input type="text" id="naam" name="naam" value="<?php echo htmlspecialchars($titel); ?>" required><br>
-
-
-    
-
-
-
-
-
-
-
-
-
-
 
 
     <label>Omschrijving:</label>
