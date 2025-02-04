@@ -213,13 +213,15 @@ header {
 
 
 
-
-
-
-
-
-
-
+            if (!$films_gevonden) {
+                
+                $zoekterm_weergeven = htmlspecialchars($zoekterm);
+                $zoekterm_weergeven = str_replace('%', '', $zoekterm_weergeven); 
+                
+                echo '<p class="yup"><br><br><br><br><br><br>Geen resultaten gevonden voor "' . $zoekterm_weergeven . '".</p>';
+                
+            }
+             ?> <br><br><br><br><br><br><br><br><br><br><br>
 
 
             
