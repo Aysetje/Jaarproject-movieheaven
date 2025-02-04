@@ -13,10 +13,10 @@ if ((isset($_POST["verzenden"])) && isset($_POST["productid"]) && $_POST["produc
             
             $target_dir = "uploads/";
             $target_file = $target_dir . basename($_FILES["foto"]["name"]);
-            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+            $type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
         
             
-            if (in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+            if (in_array($type, ['jpg', 'jpeg', 'png', 'gif'])) {
                 
                 if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
                     $foto = basename($_FILES["foto"]["name"]);
@@ -172,7 +172,7 @@ header {
      </style>
 
 <meta charset="UTF-8">
-    <meta name="description" content="Videograph Template">
+    <meta name="description" content="Film Wijzigen">
     <meta name="keywords" content="Videograph, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">

@@ -96,8 +96,8 @@ header {
     background: #9A66B8;
     color: white;
     border: none;
-    padding: 8px 12px;jdfuz
-    cursor: pointer;ghhh
+    padding: 8px 12px;
+    cursor: pointer;
     border-radius: 8px;
     margin-left: 5px;
     transition: background-color 0.3s;
@@ -116,7 +116,7 @@ header {
 
 
     <meta charset="UTF-8">
-    <meta name="description" content="Videograph Template">
+    <meta name="description" content="Producten">
     <meta name="keywords" content="Videograph, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -154,13 +154,35 @@ header {
 
 
 
-
-
-
-
-
-
-
+    <header class="header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="header__logo">
+                    <a href="./index.html"><img src="img/logo/movieheaven_logo.png" alt="" height="130px" width="140px"></a>
+                </div>
+            </div>
+            <div class="col-lg-10">
+                <div class="header__nav__option">
+                    <nav class="header__nav__menu mobile-menu">
+                        <ul>
+                            <li><a href="./index.html">Home</a></li>
+                            <li class="active"><a href="./portfolio.php">Producten</a></li>
+                            <li><a href="./contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                    
+                    <form method="GET" action="portfolio.php" class="search-form">
+                        <input type="text" name="zoekterm" placeholder="Zoek een film..." 
+                               value="<?php echo isset($_GET['zoekterm']) ? htmlspecialchars($_GET['zoekterm']) : ''; ?>">
+                        <button type="submit">🔍</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+    </div>
+</header>
 
 
     <!-- Header End -->
@@ -207,12 +229,6 @@ header {
                     </div>';
             }
             
-
-
-
-
-
-
             if (!$films_gevonden) {
                 
                 $zoekterm_weergeven = htmlspecialchars($zoekterm);
@@ -222,7 +238,6 @@ header {
                 
             }
              ?> <br><br><br><br><br><br><br><br><br><br><br>
-
 
             
             
