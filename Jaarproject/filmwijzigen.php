@@ -89,18 +89,13 @@ if (isset($_GET['id'])) {
     echo "Geen productid opgegeven.";
 }
 
-$categories = [
-    1 => 'Actie',
-    2 => 'Drama',
-    3 => 'Horror',
-    4 => 'Mysterie',
-    5 => 'Komedie',
-    6 => 'Fantasie',
-    7 => 'Romantiek',
-    8 => 'Thriller',
-    9 => 'Science Fiction',
-    10 => 'Avontuur'
-];
+$categories = [];
+$sql = "SELECT categorieid, categorie FROM tblcategorie";
+if ($result = $mysqli->query($sql)) {
+    while ($category = $result->fetch_assoc()) {
+        $categories[$category['categorieid']] = $category['categorie'];
+    }
+}
 
 
 ?>
@@ -215,6 +210,7 @@ header {
                                 <li><a href="./index.html">Home</a></li>
                                 <li class="active"><a href="./portfolio.php">Producten</a></li>
                                 <li><a href="./contact.html">Contact</a></li>
+                                <li><a href="./login.php">Login</a></li>
                                 
                             </ul>
                         </nav>
@@ -272,10 +268,10 @@ header {
 
     <label >Categorie:</label>
     <select id="categorieid" name="categorieid" required>
-        <?php
-        foreach ($categories as $key => $value) {
-            $selected = ($key == $categorieid) ? 'selected' : '';
-            echo "<option value='$key' $selected>$value</option>";
+    <?php
+        foreach ($categories as $id => $naam) {
+            $selected = ($id == $categorieid) ? 'selected' : '';
+            echo "<option value='$id' $selected>$naam</option>";
         }
         ?>
     </select><br>

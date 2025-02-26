@@ -1,75 +1,105 @@
 <?php
-$mysqli = new MySQLI("localhost", "root", "", "movieheavenphp");
+session_start();
+if (isset($_SESSION['admin'])) {
+    header("Location: admin.php");
+    exit();
+}
 
-if (mysqli_connect_errno()) {
-    trigger_error('Fout bij verbinding: ' . $mysqli->error);
-} 
-else {
-    if (isset($_GET['id'])) {
-        $productid = $_GET['id'];
+$error = "";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    
+    $correct_username = "admin";
+    $correct_password = "password123";
+
+    if ($username === $correct_username && $password === $correct_password) {
+        $_SESSION['admin'] = true;
+        header("Location: admin.php");
+        exit();
     } else {
-        $productid = 0;
+        $error = "Ongeldige gebruikersnaam of wachtwoord.";
     }
-
-$sql = "SELECT * FROM tblproducten WHERE productid = ?";
-
-}
-
-if ($stmt = $mysqli->prepare($sql)) {
-
-    $stmt->bind_param("i", $productid);
-
-    $stmt->execute();
-
-
-    $stmt->bind_result($id, $titel, $omschrijving, $prijs,$categorieid, $foto,  $beoordeling, $aantalinvoorraad);
-    $stmt->fetch();
-}
-
-else {
-    echo "Er is een fout met de query.";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="zxx">
 
 <head>
-<style>.film-detail {
-    background-color: #1C1854; 
-    padding: 50px 0;
+    <style>
+        
+body {
+    font-family: 'Josefin Sans', sans-serif;
+    background-color: #121212;
+    color: #fff;
+    margin: 0;
+    padding: 0;
 }
 
 
-.film-detail img {
-    max-width: 85%; 
-    height: auto; 
-    margin-bottom: 20px; 
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+    text-align: center;
 }
 
 
-.film-detail h2 {
-    color: white; 
-    font-size: 2.5em; 
+.login-container h2 {
+    margin-bottom: 20px;
+    font-size: 26px;
     font-weight: bold;
+    border-bottom: none;
 }
 
-.film-detail p {
-    color: white; 
-    font-size: 1.2em; 
-    line-height: 1.6;
+
+.login-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    background: #333;
+    color: #fff;
 }
-header {
-    border-bottom: none !important; 
-    box-shadow: none !important; 
+
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background: #ff4c4c;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
 }
-</style>
+
+.login-container button:hover {
+    background: #ff1f1f;
+}
+
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+    </style>
     <meta charset="UTF-8">
-    <meta name="description" content="Videograph Template">
+    <meta name="description" content="Homepage">
     <meta name="keywords" content="Videograph, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Film</title>
+    <title>Homepage</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
@@ -84,8 +114,8 @@ header {
     <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+    
 </head>
-
 <body>
     <!-- Page Preloder -->
     <div id="preloder">
@@ -106,12 +136,14 @@ header {
                         <nav class="header__nav__menu mobile-menu">
                             <ul>
                                 <li><a href="./index.html">Home</a></li>
-                                <li class="active"><a href="./portfolio.php">Producten</a></li>
-                                <li><a href="./contact.html">Contact</a></li>
-                                <li><a href="./login.php">Login</a></li>
+                                
+                                <li><a href="./portfolio.php">Producten</a></li>
+                                
+                                <li ><a href="./contact.html">Contact</a></li>
+                                <li class="active"><a href="./login.php">Login</a></li>
                             </ul>
                         </nav>
-                        
+                       
                     </div>
                 </div>
             </div>
@@ -126,41 +158,41 @@ header {
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb__text">
-                        <h2>Producten</h2>
-                        <div class="breadcrumb__links">
-                            <a href="./index.html">Home</a>
-                            <span>Producten</span>
+                    <body>
+                    <div class="login-container">
+    <h2>Admin Login</h2>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Gebruikersnaam" required>
+        <input type="password" name="password" placeholder="Wachtwoord" required>
+        <button type="submit">Login</button>
+    </form>
+    <p class="error-message"><?php echo $error; ?></p>
+</div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
     <!-- Breadcrumb End -->
-     
-    <!-- Film Detail Section Begin -->
-    <section class="film-detail spad">
+
+
+    <!-- Call To Action Section Begin -->
+    <section class="contact spad">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6">
-                    <img src="uploads/<?php echo $foto; ?>" alt="<?php echo $titel; ?>" class="img-fluid">
-                </div>
-                <div class="col-lg-6">
-                    <h2><?php echo $titel; ?></h2>
-                    <p><strong>Prijs:</strong> €<?php echo $prijs; ?></p>
-                    <p><strong>Omschrijving:</strong> <?php echo $omschrijving; ?></p>
-                    <p><strong>Beoordeling:</strong> <?php echo $beoordeling; ?> / 5</p>
-         </p><?php echo '<a href="filmwijzigen.php?id=' . $productid . '" class="btn btn-primary">Film Wijzigen</a>'; ?>
-                </div>
+                
             </div>
         </div>
     </section>
-    <!-- Film Detail Section End -->
-   
+    <!-- Call To Action Section End -->
 
     <!-- Footer Section Begin -->
-    <footer class="footer">
-        
+    <footer id="foot">
+        <div class="container">
+            
             <div class="footer__copyright">
                 <div class="row">
                     <div class="col-lg-12 text-center">
@@ -192,6 +224,8 @@ header {
 </body>
 
 </html>
-   
+
+
+
 
   

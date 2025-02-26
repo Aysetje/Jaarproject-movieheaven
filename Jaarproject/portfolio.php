@@ -120,7 +120,7 @@ header {
     <meta name="keywords" content="Videograph, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Videograph | Template</title>
+    <title>Producten</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
@@ -146,14 +146,6 @@ header {
     <!-- Header Section Begin -->
     
 
-
-
-
-
-
-
-
-
     <header class="header">
     <div class="container">
         <div class="row">
@@ -169,6 +161,7 @@ header {
                             <li><a href="./index.html">Home</a></li>
                             <li class="active"><a href="./portfolio.php">Producten</a></li>
                             <li><a href="./contact.html">Contact</a></li>
+                            <li><a href="./login.php">Login</a></li>
                         </ul>
                     </nav>
                     

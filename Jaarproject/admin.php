@@ -1,75 +1,22 @@
 <?php
-$mysqli = new MySQLI("localhost", "root", "", "movieheavenphp");
-
-if (mysqli_connect_errno()) {
-    trigger_error('Fout bij verbinding: ' . $mysqli->error);
-} 
-else {
-    if (isset($_GET['id'])) {
-        $productid = $_GET['id'];
-    } else {
-        $productid = 0;
-    }
-
-$sql = "SELECT * FROM tblproducten WHERE productid = ?";
-
-}
-
-if ($stmt = $mysqli->prepare($sql)) {
-
-    $stmt->bind_param("i", $productid);
-
-    $stmt->execute();
-
-
-    $stmt->bind_result($id, $titel, $omschrijving, $prijs,$categorieid, $foto,  $beoordeling, $aantalinvoorraad);
-    $stmt->fetch();
-}
-
-else {
-    echo "Er is een fout met de query.";
+session_start();
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="zxx">
 
 <head>
-<style>.film-detail {
-    background-color: #1C1854; 
-    padding: 50px 0;
-}
-
-
-.film-detail img {
-    max-width: 85%; 
-    height: auto; 
-    margin-bottom: 20px; 
-}
-
-
-.film-detail h2 {
-    color: white; 
-    font-size: 2.5em; 
-    font-weight: bold;
-}
-
-.film-detail p {
-    color: white; 
-    font-size: 1.2em; 
-    line-height: 1.6;
-}
-header {
-    border-bottom: none !important; 
-    box-shadow: none !important; 
-}
-</style>
     <meta charset="UTF-8">
-    <meta name="description" content="Videograph Template">
+    <meta name="description" content="Homepage">
     <meta name="keywords" content="Videograph, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Film</title>
+    <title>Admin Pagina</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
@@ -84,8 +31,8 @@ header {
     <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+    
 </head>
-
 <body>
     <!-- Page Preloder -->
     <div id="preloder">
@@ -106,12 +53,14 @@ header {
                         <nav class="header__nav__menu mobile-menu">
                             <ul>
                                 <li><a href="./index.html">Home</a></li>
-                                <li class="active"><a href="./portfolio.php">Producten</a></li>
-                                <li><a href="./contact.html">Contact</a></li>
-                                <li><a href="./login.php">Login</a></li>
+                                
+                                <li><a href="./portfolio.php">Producten</a></li>
+                                
+                                <li ><a href="./contact.html">Contact</a></li>
+                                <li class="active"><a href="./login.php">Login</a></li>
                             </ul>
                         </nav>
-                        
+                       
                     </div>
                 </div>
             </div>
@@ -126,41 +75,43 @@ header {
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb__text">
-                        <h2>Producten</h2>
-                        <div class="breadcrumb__links">
-                            <a href="./index.html">Home</a>
-                            <span>Producten</span>
+                    <body>
+                    <body>
+                            <h2>Welkom, Admin!</h2>
+                            <p>Je bent ingelogd als beheerder.</p>
+                            <a href="logout.php">Uitloggen</a>
+                    </body>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
     <!-- Breadcrumb End -->
-     
-    <!-- Film Detail Section Begin -->
-    <section class="film-detail spad">
+
+
+    <!-- Call To Action Section Begin -->
+    <section class="contact spad">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6">
-                    <img src="uploads/<?php echo $foto; ?>" alt="<?php echo $titel; ?>" class="img-fluid">
+                <div class="col-lg-6 col-md-6">
+                    <div class="contact__map">
+                        <iframe
+                            
+                            height="250" style="border:0;"></iframe>
+                    </div>
                 </div>
-                <div class="col-lg-6">
-                    <h2><?php echo $titel; ?></h2>
-                    <p><strong>Prijs:</strong> €<?php echo $prijs; ?></p>
-                    <p><strong>Omschrijving:</strong> <?php echo $omschrijving; ?></p>
-                    <p><strong>Beoordeling:</strong> <?php echo $beoordeling; ?> / 5</p>
-         </p><?php echo '<a href="filmwijzigen.php?id=' . $productid . '" class="btn btn-primary">Film Wijzigen</a>'; ?>
-                </div>
+                
             </div>
         </div>
     </section>
-    <!-- Film Detail Section End -->
-   
+    <!-- Call To Action Section End -->
 
     <!-- Footer Section Begin -->
-    <footer class="footer">
-        
+    <footer id="foot">
+        <div class="container">
+            
             <div class="footer__copyright">
                 <div class="row">
                     <div class="col-lg-12 text-center">
@@ -192,6 +143,3 @@ header {
 </body>
 
 </html>
-   
-
-  

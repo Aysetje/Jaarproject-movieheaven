@@ -53,22 +53,36 @@ if ((isset($_POST["verzenden"])) && (isset($_POST["naam"])) && ($_POST["naam"] !
             echo 'Er zit een fout in de query: ' . $mysqli->error;
         }
     }
+    $mysqli = new MySQLi("localhost", "root", "", "movieheavenphp");
+    if ($mysqli->connect_errno) {
+    die('Fout bij verbinding: ' . $mysqli->connect_error);
 }
 
-$categories = [
-    1 => 'Actie',
-    2 => 'Drama',
-    3 => 'Horror',
-    4 => 'Mysterie',
-    5 => 'Komedie',
-    6 => 'Fantasie',
-    7 => 'Romantiek',
-    8 => 'Thriller',
-    9 => 'Science Fiction',
-    10 => 'Avontuur'
-];
-?>
 
+}
+
+
+?>
+<?php
+$mysqli = new MySQLi("localhost", "root", "", "movieheavenphp");
+
+if ($mysqli->connect_errno) {
+    die('Fout bij verbinding: ' . $mysqli->connect_error);
+}
+
+$categories = [];
+$sql = "SELECT categorieid, categorie FROM tblcategorie";
+$result = $mysqli->query($sql);
+
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $categories[$row['categorieid']] = $row['categorie'];
+    }
+    $result->free();
+} else {
+    die("Fout bij ophalen van categorieën: " . $mysqli->error);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -181,6 +195,7 @@ header {
                                 <li><a href="./index.html">Home</a></li>
                                 <li class="active"><a href="./portfolio.php">Producten</a></li>
                                 <li><a href="./contact.html">Contact</a></li>
+                                <li><a href="./login.php">Login</a></li>
                                 
                             </ul>
                         </nav>
@@ -234,11 +249,13 @@ header {
 
         <br>
         <label>Categorie:</label>
+        
         <select id="categorieid" name="categorieid" required>
             <?php
+           
+            
             foreach ($categories as $key => $value) {
-                $selected = ($key == $categorieid) ? 'selected' : '';
-                echo "<option value='$key' $selected>$value</option>";
+                echo "<option value='$key'>$value</option>";
             }
             ?>
         </select><br>
