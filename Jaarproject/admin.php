@@ -1,8 +1,24 @@
 <?php
 session_start();
-if (!isset($_SESSION['admin'])) {
-    header("Location: login.php");
-    exit();
+$mysqli = new MySQLI("localhost", "root", "", "movieheavenphp");
+
+if (mysqli_connect_errno()) {
+    trigger_error('Fout bij verbinding: ' . $mysqli->error);
+} else {
+    // Producten ophalen
+    $sql = "SELECT productid, titel, omschrijving, prijs, categorieid, beoordeling, aantalinvoorraad FROM tblproducten";
+    $producten = $mysqli->query($sql);
+
+    // Klanten ophalen
+    $klanten_sql = "SELECT * FROM tblklanten";
+    $klanten_result = $mysqli->query($klanten_sql);
+    
+    $categories = [];
+    $categorie_sql = "SELECT categorieid, categorie FROM tblcategorie";
+    $categorie_result = $mysqli->query($categorie_sql);
+    while ($row = $categorie_result->fetch_assoc()) {
+        $categories[$row['categorieid']] = $row['categorie'];
+    }
 }
 ?>
 
@@ -11,6 +27,150 @@ if (!isset($_SESSION['admin'])) {
 <html lang="zxx">
 
 <head>
+    <style>
+        /* Algemene stijlen */
+body {
+    font-family: 'Josefin Sans', sans-serif;
+    background-color: #a788d6; /* Lichte paarse achtergrond */
+    color: #2a2a2a; /* Donkere grijstint voor tekst */
+    margin: 0;
+    padding: 0;
+}
+h3, h4 {
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+
+h3 {
+    font-size: 32px;
+    color: #4a105c;
+    border-bottom: 3px solid #815ac0;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+h4 {
+    font-size: 26px;
+    color: #6a1b9a;
+    border-bottom: 2px solid #9b3cd6;
+    display: inline-block;
+    padding-bottom: 3px;
+}
+/* Header */
+.header {
+    background-color: #815ac0;
+    padding: 15px 0;
+}
+
+.header__nav__menu ul {
+    list-style: none;
+    display: flex;
+    justify-content: right;
+    padding: 0;
+}
+
+.header__nav__menu ul li {
+    margin: 0 15px;
+}
+
+.header__nav__menu ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.header__nav__menu ul li a:hover {
+    color: #ffccff;
+}
+
+/* Welkomstbericht */
+.breadcrumb__text h2 {
+    font-size: 28px;
+    color: #4a105c;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.breadcrumb__text p {
+    font-size: 18px;
+    color: #2a2a2a;
+}
+
+/* Tabellen */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table th {
+    background-color: #4a105c;
+    color: #ffffff;
+    font-size: 18px;
+    padding: 12px;
+    text-align: left;
+}
+
+/* Alternatieve rijkleuren voor betere zichtbaarheid */
+.table tr:nth-child(odd) {
+    background-color: #f3e7ff; /* Zachte pastelkleur */
+}
+
+.table tr:nth-child(even) {
+    background-color: #dfc7f2; /* Iets donkerdere paarstint */
+}
+
+.table tr:hover {
+    background-color: #e4d3f7; /* Opvallende hoverkleur */
+}
+
+.table td {
+    padding: 12px;
+    color: #2a2a2a;
+}
+
+/* Knoppen */
+a, button {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #6a1b9a;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+    font-size: 16px;
+}
+
+
+
+/* Formulieren */
+form {
+    background: #dfc7f2;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.form-group label {
+    font-size: 16px;
+    color: #4a105c;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    background: #f3e7ff;
+    border: 1px solid #815ac0;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+
+
+
+    </style>
     <meta charset="UTF-8">
     <meta name="description" content="Homepage">
     <meta name="keywords" content="Videograph, unica, creative, html">
@@ -57,7 +217,7 @@ if (!isset($_SESSION['admin'])) {
                                 <li><a href="./portfolio.php">Producten</a></li>
                                 
                                 <li ><a href="./contact.html">Contact</a></li>
-                                <li class="active"><a href="./login.php">Login</a></li>
+                                <li> <a href="logout.php">Uitloggen</a></li>
                             </ul>
                         </nav>
                        
@@ -79,7 +239,7 @@ if (!isset($_SESSION['admin'])) {
                     <body>
                             <h2>Welkom, Admin!</h2>
                             <p>Je bent ingelogd als beheerder.</p>
-                            <a href="logout.php">Uitloggen</a>
+                            
                     </body>
                         </div>
                     </div>
@@ -89,25 +249,121 @@ if (!isset($_SESSION['admin'])) {
     </div>
     
     <!-- Breadcrumb End -->
-
-
-    <!-- Call To Action Section Begin -->
-    <section class="contact spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 col-md-6">
-                    <div class="contact__map">
-                        <iframe
-                            
-                            height="250" style="border:0;"></iframe>
-                    </div>
-                </div>
+     <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option spad set-bg" data-setbg="img/breadcrumb-bg.jpg">
+        
+            
                 
-            </div>
+    <section class="producten-overzicht">
+        <div class="container">
+            <h4>Producten Overzicht</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Titel</th>
+                        <th>Omschrijving</th>
+                        <th>Prijs</th>
+                        <th>Categorie</th>
+                        <th>Beoordeling</th>
+                        <th>Aantal in voorraad</th>
+                        <th>Acties</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php if ($producten && $producten->num_rows > 0): ?>
+                        <?php while ($row = $producten->fetch_assoc()): ?>
+                            <tr>
+                            <td><?php echo $row['productid']; ?></td>
+                            <td><?php echo htmlspecialchars($row['titel']); ?></td>
+                            <td><?php echo htmlspecialchars($row['omschrijving']); ?></td>
+                            <td>€<?php echo number_format($row['prijs'], 2, ',', '.'); ?></td>
+                            <td><?php echo htmlspecialchars(isset($categories[$row['categorieid']]) ? $categories[$row['categorieid']] : 'Onbekend'); ?></td>
+                            <td><?php echo $row['beoordeling']; ?> / 5</td>
+                            <td><?php echo $row['aantalinvoorraad']; ?></td>
+                                <td>
+                                    <a href="hide_product.php?id=<?php echo $row['productid']; ?>">Verberg</a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="4">Geen producten gevonden.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </section>
-    <!-- Call To Action Section End -->
+    <!-- Producten Overzicht Eind -->
 
+    <!-- Klantenbeheer Begin -->
+    <section class="klanten-beheer">
+        <div class="container">
+            <h4>Klanten Beheer</h4>
+            <form action="add_customer.php" method="POST">
+                <div class="form-group">
+                    <label for="klantid">Klant ID:</label>
+                    <input type="text" class="form-control" id="klantid" name="klantid" required>
+                </div>
+                <div class="form-group">
+                    <label for="naam">Naam:</label>
+                    <input type="text" class="form-control" id="naam" name="naam" required>
+                </div>
+                <div class="form-group">
+                    <label for="adres">Adres:</label>
+                    <input type="text" class="form-control" id="adres" name="adres" required>
+                </div>
+                <div class="form-group">
+                    <label for="postcodeid">Postcode ID:</label>
+                    <input type="text" class="form-control" id="postcodeid" name="postcodeid" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Klant Toevoegen</button>
+            </form>
+
+            <h4>Bestaande Klanten</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Klant ID</th>
+                        <th>Naam</th>
+                        <th>Adres</th>
+                        <th>Postcode ID</th>
+                        <th>Email</th>
+                        <th>Acties</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($klanten_result->num_rows > 0): ?>
+                        <?php while ($klant = $klanten_result->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo $klant['klantid']; ?></td>
+                                <td><?php echo htmlspecialchars($klant['naam']); ?></td>
+                                <td><?php echo htmlspecialchars($klant['adres']); ?></td>
+                                <td><?php echo htmlspecialchars($klant['postcodeid']); ?></td>
+                                <td><?php echo htmlspecialchars($klant['email']); ?></td>
+                                <td>
+                                    <a href="edit_customer.php?id=<?php echo $klant['klantid']; ?>">Wijzig</a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6">Geen klanten gevonden.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- Klantenbeheer Eind -->
+
+
+  
     <!-- Footer Section Begin -->
     <footer id="foot">
         <div class="container">
