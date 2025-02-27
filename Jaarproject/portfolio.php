@@ -5,35 +5,73 @@
         trigger_error('Fout bij verbinding: ' . $mysqli->error);
     }
     else{
-        $zoekterm = isset($_GET['zoekterm']) ? trim($_GET['zoekterm']) : '';
-        $order = isset($_GET['order']) && $_GET['order'] == 'desc' ? 'DESC' : 'ASC';
         
-        $sql = "SELECT * FROM tblproducten";
-        if (!empty($zoekterm)) {
-            $sql .= " WHERE titel LIKE ?";
-        }
-        $sql .= " ORDER BY titel $order";
-        if($stmt = $mysqli->prepare($sql)) {
+        
+        
+        if ($mysqli->connect_errno) {
+            trigger_error('Fout bij verbinding: ' . $mysqli->connect_error);
+        } else {
+            $zoekterm = isset($_GET['zoekterm']) ? trim($_GET['zoekterm']) : '';
+            $order = isset($_GET['order']) && $_GET['order'] == 'desc' ? 'DESC' : 'ASC';
+            $sorteer = isset($_GET['sorteer']) ? $_GET['sorteer'] : '';
+            $minPrijs = isset($_GET['minPrijs']) ? (float) $_GET['minPrijs'] : null;
+            $maxPrijs = isset($_GET['maxPrijs']) ? (float) $_GET['maxPrijs'] : null;
+        
+            // Basisquery
+            $sql = "SELECT * FROM tblproducten WHERE 1=1";
+            $params = [];
+            $types = "";
+        
             if (!empty($zoekterm)) {
-                $zoekterm = "%$zoekterm%";
-                $stmt->bind_param("s", $zoekterm);
+                $sql .= " AND titel LIKE ?";
+                $params[] = "%$zoekterm%";
+                $types .= "s";
             }
-            if(!$stmt->execute()){
-                echo "Het uitvoeren van de query is mislukt: ". $stmt->error. " in query: " . $sql;
+        
+            if (!empty($minPrijs)) {
+                $sql .= " AND prijs >= ?";
+                $params[] = $minPrijs;
+                $types .= "d";
             }
-            else{
-                $stmt->bind_result($productid, $titel,$omschrijving,$prijs,$categorieid,$foto,$beoordeling,$aantalinvoorraad);
-                
-              
+        
+            if (!empty($maxPrijs)) {
+                $sql .= " AND prijs <= ?";
+                $params[] = $maxPrijs;
+                $types .= "d";
             }
-           
+        
+            if (!empty($sorteer)) {
+                if ($sorteer == "prijs_asc") {
+                    $sql .= " ORDER BY prijs ASC";
+                } elseif ($sorteer == "prijs_desc") {
+                    $sql .= " ORDER BY prijs DESC";
+                }
+            } else {
+                $sql .= " ORDER BY titel $order";
+            }
+        
+            // Query voorbereiden en uitvoeren
+            if ($stmt = $mysqli->prepare($sql)) {
+                if (!empty($params)) {
+                    $stmt->bind_param($types, ...$params);
+                }
+        
+                if (!$stmt->execute()) {
+                    echo "Fout bij query: " . $stmt->error;
+                } else {
+                    $result = $stmt->get_result();
+                    $films = []; // Hier slaan we de films op
+        
+                    while ($row = $result->fetch_assoc()) {
+                        $films[] = $row; // Voeg film toe aan array
+                    }
+                }
+            } else {
+                echo "Er zit een fout in de query: " . $mysqli->error;
+            }
         }
-    
-        else{ echo "Er zit een fout in de query: " . $mysqli->error;}
+
     }
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="zxx">
@@ -48,112 +86,8 @@
     text-overflow: ellipsis;
 }
 
-.work__item {
-    width: 100%;
-    max-width: 300px; 
-    margin: 42px 40px;
-    margin-bottom: 90px;
-}
-
-
-.work__text p {
-    font-size: 14px;
-    color: #555; 
-}
-
-.work__text strong {
-    font-size: 16px;
-    color: #FFFFFF;
-}
-header {
-    border-bottom: none !important; 
-    box-shadow: none !important; 
-}
-
-
-.header__nav__option {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end; 
-    gap: 20px; 
-}
-
-.search-form {
-    display: flex;
-    align-items: center;
-}
-
-.search-form input {
-    padding: 8px;
-    border: 2px solid #9A66B8;
-    border-radius: 8px;
-    outline: none;
-    font-size: 14px;
-    width: 200px;
-}
-
-.search-form button {
-    background: #9A66B8;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 8px;
-    margin-left: 5px;
-    transition: background-color 0.3s;
-}
-
-.search-form button:hover {
-    background: #7C4D9D;
-}
-
-.yup{margin: 0 auto;
-    text-align: center; font-size: 21px;}
-
-
-
-
-
-
-    .sort-container {
-    display: flex;
-    justify-content: flex-end; /* Verplaatst de dropdown volledig naar rechts */
-    align-items: center;
-    margin-bottom: 20px;
-    padding-right: 40px; /* Extra ruimte aan de rechterkant */
-}
-
-.sort-container label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #9A66B8; /* Geeft een betere zichtbare kleur */
-    margin-right: 10px;
-}
-
-.sort-container select {
-    padding: 10px;
-    font-size: 14px;
-    border: 2px solid #9A66B8;
-    border-radius: 8px;
-    background-color: #fff;
-    color: #333;
-    outline: none;
-    transition: 0.3s ease-in-out;
-    cursor: pointer;
-}
-
-.sort-container select:hover {
-    border-color: #7C4D9D;
-}
-
-.sort-container select:focus {
-    border-color: #5C2E7E;
-    box-shadow: 0 0 5px rgba(92, 46, 126, 0.5);
-}
-
-
 </style>
-
+<link rel="stylesheet" href="portfolio.css" type="text/css">
 
     <meta charset="UTF-8">
     <meta name="description" content="Producten">
@@ -215,16 +149,39 @@ header {
 
                     </form>
                 </div> <div class="sort-container">
-    <label for="sorteren">Sorteer op:</label>
-    <select id="sorteren" onchange="sorteerFilms()">
-        <option value="asc" <?php echo ($order == 'ASC') ? 'selected' : ''; ?>>A-Z</option>
-        <option value="desc" <?php echo ($order == 'DESC') ? 'selected' : ''; ?>>Z-A</option>
-    </select>
-</div>
+                <label for="sorteren">Sorteer op:</label>
+                <select id="sorteren" onchange="sorteerFilms()">
+                    <option value="asc" <?php echo ($order == 'ASC') ? 'selected' : ''; ?>>A-Z</option>
+                    <option value="desc" <?php echo ($order == 'DESC') ? 'selected' : ''; ?>>Z-A</option>
+                </select>
             </div>
-        </div>
-        <div id="mobile-menu-wrap"></div>
-    </div>
+            <form method="GET" action="portfolio.php" class="search-form">
+            <div class="filter-container">
+
+                <label for="minPrijs">Min. prijs:</label>
+                <input type="number" id="minPrijs" name="minPrijs" placeholder="€0" 
+                    value="<?php echo isset($_GET['minPrijs']) ? htmlspecialchars($_GET['minPrijs']) : ''; ?>">
+
+                <label for="maxPrijs">Max. prijs:</label>
+                <input type="number" id="maxPrijs" name="maxPrijs" placeholder="€100" 
+                    value="<?php echo isset($_GET['maxPrijs']) ? htmlspecialchars($_GET['maxPrijs']) : ''; ?>">
+
+                <button type="submit">Filter</button>
+                </div>
+                
+            </form>
+            <div class="sort-container">
+            <label for="sorteer">Sorteer op:</label>
+                <select name="sorteer" id="sorteer" onchange="filterFilms()">
+                    <option value="">-- Selecteer --</option>
+                    <option value="prijs_asc" <?php if (isset($_GET['sorteer']) && $_GET['sorteer'] == 'prijs_asc') echo 'selected'; ?>>Prijs (Laag → Hoog)</option>
+                    <option value="prijs_desc" <?php if (isset($_GET['sorteer']) && $_GET['sorteer'] == 'prijs_desc') echo 'selected'; ?>>Prijs (Hoog → Laag)</option>
+                </select></div>
+
+                        </div>
+                    </div>
+                    <div id="mobile-menu-wrap"></div>
+                </div>
 </header>
 
 
@@ -256,35 +213,29 @@ header {
     <a href="filmtoevoegen.php" class="btn btn-primary">Film Toevoegen</a>
     
 
-        <div class="row">
-        <?php   $films_gevonden = false;
-            while($stmt->fetch()){ 
-                $films_gevonden = true;
-                echo '<div class="work__item">   
-             <a href="film.php?id=' . $productid . '">
-                 <img src="uploads/' . htmlspecialchars($foto) . '" alt="' . htmlspecialchars($titel) . '" class="img-fluid">
-                         <div class="work__text">
-                                <h5>' . htmlspecialchars($titel) . '</h5>
-                                <p>' . htmlspecialchars($omschrijving) . '</p>
-                            <strong>€' . number_format($prijs, 2, ',', '.') . '</strong>
-                            </div>   
-                        </a>
-                    </div>';
-            }
-            
-            if (!$films_gevonden) {
-                
-                $zoekterm_weergeven = htmlspecialchars($zoekterm);
-                $zoekterm_weergeven = str_replace('%', '', $zoekterm_weergeven); 
-                
-                echo '<p class="yup"><br><br><br><br><br><br>Geen resultaten gevonden voor "' . $zoekterm_weergeven . '".</p>';
-                
-            }
-             ?> <br><br><br><br><br><br><br><br><br><br><br>
-
-            
-            
-        </div>  
+    <div class="row">
+    <?php
+    if (!empty($films)) {
+        foreach ($films as $film) {
+            echo '<div class="work__item">   
+                <a href="film.php?id=' . $film['productid'] . '">
+                    <img src="uploads/' . htmlspecialchars($film['foto']) . '" alt="' . htmlspecialchars($film['titel']) . '" class="img-fluid">
+                    <div class="work__text">
+                        <h5>' . htmlspecialchars($film['titel']) . '</h5>
+                        <p>' . htmlspecialchars($film['omschrijving']) . '</p>
+                        <strong>€' . number_format($film['prijs'], 2, ',', '.') . '</strong>
+                    </div>   
+                </a>
+            </div>';
+        }
+    } else {
+        // Toon dit als er geen films zijn gevonden
+        $zoekterm_weergeven = htmlspecialchars($zoekterm);
+        $zoekterm_weergeven = str_replace('%', '', $zoekterm_weergeven); 
+        echo '<p class="yup"><br><br><br><br><br><br>Geen resultaten gevonden voor "' . $zoekterm_weergeven . '".</p>';
+    }
+    ?>
+</div>
         </div>
     </div>
 </section>
@@ -327,6 +278,19 @@ function sorteerFilms() {
     var zoekterm = "<?php echo isset($_GET['zoekterm']) ? urlencode($_GET['zoekterm']) : ''; ?>";
     window.location.href = "portfolio.php?order=" + sorteerVolgorde + (zoekterm ? "&zoekterm=" + zoekterm : "");
 }
+function filterFilms() {
+    let sorteerOptie = document.getElementById('sorteer').value;
+    let url = new URL(window.location.href);
+    
+    if (sorteerOptie) {
+        url.searchParams.set('sorteer', sorteerOptie);
+    } else {
+        url.searchParams.delete('sorteer');
+    }
+
+    window.location.href = url.toString();
+}
+
 </script>
 
 </body>

@@ -1,0 +1,151 @@
+
+.work__item {
+    width: 100%;
+    max-width: 300px; 
+    margin: 42px 40px;
+    margin-bottom: 90px;
+}
+
+
+.work__text p {
+    font-size: 14px;
+    color: #555; 
+}
+
+.work__text strong {
+    font-size: 16px;
+    color: #FFFFFF;
+}
+header {
+    border-bottom: none !important; 
+    box-shadow: none !important; 
+}
+
+
+.header__nav__option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; 
+    gap: 20px; 
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-form input {
+    padding: 8px;
+    border: 2px solid #9A66B8;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    width: 200px;
+}
+
+.search-form button {
+    background: #9A66B8;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-left: 5px;
+    transition: background-color 0.3s;
+}
+
+.search-form button:hover {
+    background: #7C4D9D;
+}
+
+.yup{margin: 0 auto;
+    text-align: center; font-size: 21px;}
+
+
+
+
+
+
+    .sort-container {
+    display: flex;
+    justify-content: flex-end; /* Verplaatst de dropdown volledig naar rechts */
+    align-items: center;
+    margin-bottom: 20px;
+    padding-right: 0px; /* Extra ruimte aan de rechterkant */
+}
+
+.sort-container label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #9A66B8; /* Geeft een betere zichtbare kleur */
+    margin-right: 10px;
+}
+
+.sort-container select {
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid #9A66B8;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
+    outline: none;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.sort-container select:hover {
+    border-color: #7C4D9D;
+}
+
+.sort-container select:focus {
+    border-color: #5C2E7E;
+    box-shadow: 0 0 5px rgba(92, 46, 126, 0.5);
+}
+
+.filter-container {
+    display: flex;
+    justify-content: flex-end; /* Zet het filter aan de rechterkant */
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%; /* Zorgt ervoor dat het de hele breedte gebruikt */
+    padding-right: 0px; /* Vergroot de afstand naar rechts */
+    position: relative; /* Voorkomt beïnvloeding door andere elementen */
+}
+
+.filter-container select,
+.filter-container input,
+.filter-container button {
+    flex-shrink: 0; /* Voorkomt dat de elementen inkrimpen */
+}
+
+
+.filter-container label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #9A66B8;
+}
+
+.filter-container input {
+    padding: 8px;
+    font-size: 14px;
+    border: 2px solid #9A66B8;
+    border-radius: 8px;
+    width: 80px;
+    text-align: center;
+    outline: none;
+}
+
+.filter-container button {
+    background: #9A66B8;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.filter-container button:hover {
+    background: #7C4D9D;
+}
