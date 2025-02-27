@@ -5,9 +5,55 @@ $mysqli = new MySQLI("localhost", "root", "", "movieheavenphp");
 if (mysqli_connect_errno()) {
     trigger_error('Fout bij verbinding: ' . $mysqli->error);
 } else {
-    // Producten ophalen
-    $sql = "SELECT productid, titel, omschrijving, prijs, categorieid, beoordeling, aantalinvoorraad FROM tblproducten";
-    $producten = $mysqli->query($sql);
+
+    // Klant toevoegen
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['naam'])) {
+        $klantid = $_POST['klantid'];
+        $naam = $_POST['naam'];
+        $adres = $_POST['adres'];
+        $postcodeid = $_POST['postcodeid'];
+        $email = $_POST['email'];
+
+        $insert_sql = "INSERT INTO tblklanten (klantid, naam, adres, postcodeid, email) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $mysqli->prepare($insert_sql);
+        $stmt->bind_param("sssss", $klantid, $naam, $adres, $postcodeid, $email);
+        $stmt->execute();
+    }
+    // Klant gegevens wijzigen
+    if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) {
+        $klantid = $_GET['id'];
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $naam = $_POST['naam'];
+            $adres = $_POST['adres'];
+            $postcodeid = $_POST['postcodeid'];
+            $email = $_POST['email'];
+
+            $update_sql = "UPDATE tblklanten SET naam = ?, adres = ?, postcodeid = ?, email = ? WHERE klantid = ?";
+            $stmt = $mysqli->prepare($update_sql);
+            $stmt->bind_param("sssss", $naam, $adres, $postcodeid, $email, $klantid);
+            $stmt->execute();
+        }
+    }
+
+    // Volgende klant ID ophalen
+    $next_klantid_sql = "SELECT MAX(klantid) AS max_id FROM tblklanten";
+    $next_klantid_result = $mysqli->query($next_klantid_sql);
+    $next_klantid = 1; // Standaard naar 1 als er geen klanten zijn
+    if ($next_klantid_result) {
+        $row = $next_klantid_result->fetch_assoc();
+        $next_klantid = $row['max_id'] + 1;
+    }
+    // Product verbergen
+    if (isset($_GET['action']) && $_GET['action'] === 'hide' && isset($_GET['id'])) {
+        $productid = $_GET['id'];
+        $hide_sql = "UPDATE tblproducten SET is_hidden = 1 WHERE productid = ?";
+        $stmt = $mysqli->prepare($hide_sql);
+        $stmt->bind_param("i", $productid);
+        $stmt->execute();
+    }
+        // Producten ophalen
+        $sql = "SELECT productid, titel, omschrijving, prijs, categorieid, beoordeling, aantalinvoorraad FROM tblproducten";
+        $producten = $mysqli->query($sql);
 
     // Klanten ophalen
     $klanten_sql = "SELECT * FROM tblklanten";
@@ -251,57 +297,11 @@ form {
     <!-- Breadcrumb End -->
      <!-- Breadcrumb Begin -->
     <div class="breadcrumb-option spad set-bg" data-setbg="img/breadcrumb-bg.jpg">
-        
-            
-                
-    <section class="producten-overzicht">
-        <div class="container">
-            <h4>Producten Overzicht</h4>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Titel</th>
-                        <th>Omschrijving</th>
-                        <th>Prijs</th>
-                        <th>Categorie</th>
-                        <th>Beoordeling</th>
-                        <th>Aantal in voorraad</th>
-                        <th>Acties</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if ($producten && $producten->num_rows > 0): ?>
-                        <?php while ($row = $producten->fetch_assoc()): ?>
-                            <tr>
-                            <td><?php echo $row['productid']; ?></td>
-                            <td><?php echo htmlspecialchars($row['titel']); ?></td>
-                            <td><?php echo htmlspecialchars($row['omschrijving']); ?></td>
-                            <td>€<?php echo number_format($row['prijs'], 2, ',', '.'); ?></td>
-                            <td><?php echo htmlspecialchars(isset($categories[$row['categorieid']]) ? $categories[$row['categorieid']] : 'Onbekend'); ?></td>
-                            <td><?php echo $row['beoordeling']; ?> / 5</td>
-                            <td><?php echo $row['aantalinvoorraad']; ?></td>
-                                <td>
-                                    <a href="hide_product.php?id=<?php echo $row['productid']; ?>">Verberg</a>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="4">Geen producten gevonden.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </section>
-    <!-- Producten Overzicht Eind -->
-
-    <!-- Klantenbeheer Begin -->
+         <!-- Klantenbeheer Begin -->
     <section class="klanten-beheer">
         <div class="container">
             <h4>Klanten Beheer</h4>
-            <form action="add_customer.php" method="POST">
+            <form action="" method="POST">
                 <div class="form-group">
                     <label for="klantid">Klant ID:</label>
                     <input type="text" class="form-control" id="klantid" name="klantid" required>
@@ -347,7 +347,7 @@ form {
                                 <td><?php echo htmlspecialchars($klant['postcodeid']); ?></td>
                                 <td><?php echo htmlspecialchars($klant['email']); ?></td>
                                 <td>
-                                    <a href="edit_customer.php?id=<?php echo $klant['klantid']; ?>">Wijzig</a>
+                                    <a href="?action=edit&id=<?php echo $klant['klantid']; ?>">Wijzig</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -361,6 +361,52 @@ form {
         </div>
     </section>
     <!-- Klantenbeheer Eind -->
+            
+                
+    <section class="producten-overzicht">
+        <div class="container">
+            <h4>Producten Overzicht</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Titel</th>
+                        <th>Omschrijving</th>
+                        <th>Prijs</th>
+                        <th>Categorie</th>
+                        <th>Beoordeling</th>
+                        <th>Aantal in voorraad</th>
+                        <th>Acties</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php if ($producten && $producten->num_rows > 0): ?>
+                        <?php while ($row = $producten->fetch_assoc()): ?>
+                            <tr>
+                            <td><?php echo $row['productid']; ?></td>
+                            <td><?php echo htmlspecialchars($row['titel']); ?></td>
+                            <td><?php echo htmlspecialchars($row['omschrijving']); ?></td>
+                            <td>€<?php echo number_format($row['prijs'], 2, ',', '.'); ?></td>
+                            <td><?php echo htmlspecialchars(isset($categories[$row['categorieid']]) ? $categories[$row['categorieid']] : 'Onbekend'); ?></td>
+                            <td><?php echo $row['beoordeling']; ?> / 5</td>
+                            <td><?php echo $row['aantalinvoorraad']; ?></td>
+                                <td>
+                                    <a href="?action=hide&id=<?php echo $row['productid']; ?>">Verberg</a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="4">Geen producten gevonden.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- Producten Overzicht Eind -->
+
+   
 
 
   

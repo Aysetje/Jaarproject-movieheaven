@@ -6,13 +6,13 @@
     }
     else{
         $zoekterm = isset($_GET['zoekterm']) ? trim($_GET['zoekterm']) : '';
-
+        $order = isset($_GET['order']) && $_GET['order'] == 'desc' ? 'DESC' : 'ASC';
         
         $sql = "SELECT * FROM tblproducten";
         if (!empty($zoekterm)) {
             $sql .= " WHERE titel LIKE ?";
         }
-
+        $sql .= " ORDER BY titel $order";
         if($stmt = $mysqli->prepare($sql)) {
             if (!empty($zoekterm)) {
                 $zoekterm = "%$zoekterm%";
@@ -112,6 +112,46 @@ header {
 
 
 
+
+
+
+    .sort-container {
+    display: flex;
+    justify-content: flex-end; /* Verplaatst de dropdown volledig naar rechts */
+    align-items: center;
+    margin-bottom: 20px;
+    padding-right: 40px; /* Extra ruimte aan de rechterkant */
+}
+
+.sort-container label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #9A66B8; /* Geeft een betere zichtbare kleur */
+    margin-right: 10px;
+}
+
+.sort-container select {
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid #9A66B8;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
+    outline: none;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.sort-container select:hover {
+    border-color: #7C4D9D;
+}
+
+.sort-container select:focus {
+    border-color: #5C2E7E;
+    box-shadow: 0 0 5px rgba(92, 46, 126, 0.5);
+}
+
+
 </style>
 
 
@@ -169,8 +209,18 @@ header {
                         <input type="text" name="zoekterm" placeholder="Zoek een film..." 
                                value="<?php echo isset($_GET['zoekterm']) ? htmlspecialchars($_GET['zoekterm']) : ''; ?>">
                         <button type="submit">🔍</button>
+
+             
+
+
                     </form>
-                </div>
+                </div> <div class="sort-container">
+    <label for="sorteren">Sorteer op:</label>
+    <select id="sorteren" onchange="sorteerFilms()">
+        <option value="asc" <?php echo ($order == 'ASC') ? 'selected' : ''; ?>>A-Z</option>
+        <option value="desc" <?php echo ($order == 'DESC') ? 'selected' : ''; ?>>Z-A</option>
+    </select>
+</div>
             </div>
         </div>
         <div id="mobile-menu-wrap"></div>
@@ -271,6 +321,14 @@ header {
     <script src="js/jquery.slicknav.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+    <script>
+function sorteerFilms() {
+    var sorteerVolgorde = document.getElementById("sorteren").value;
+    var zoekterm = "<?php echo isset($_GET['zoekterm']) ? urlencode($_GET['zoekterm']) : ''; ?>";
+    window.location.href = "portfolio.php?order=" + sorteerVolgorde + (zoekterm ? "&zoekterm=" + zoekterm : "");
+}
+</script>
+
 </body>
 
 </html>
