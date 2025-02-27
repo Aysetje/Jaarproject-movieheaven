@@ -17,7 +17,7 @@
             $minPrijs = isset($_GET['minPrijs']) ? (float) $_GET['minPrijs'] : null;
             $maxPrijs = isset($_GET['maxPrijs']) ? (float) $_GET['maxPrijs'] : null;
         
-            // Basisquery
+           
             $sql = "SELECT * FROM tblproducten WHERE 1=1";
             $params = [];
             $types = "";
@@ -50,7 +50,7 @@
                 $sql .= " ORDER BY titel $order";
             }
         
-            // Query voorbereiden en uitvoeren
+            
             if ($stmt = $mysqli->prepare($sql)) {
                 if (!empty($params)) {
                     $stmt->bind_param($types, ...$params);
@@ -60,10 +60,10 @@
                     echo "Fout bij query: " . $stmt->error;
                 } else {
                     $result = $stmt->get_result();
-                    $films = []; // Hier slaan we de films op
+                    $films = []; 
         
                     while ($row = $result->fetch_assoc()) {
-                        $films[] = $row; // Voeg film toe aan array
+                        $films[] = $row; 
                     }
                 }
             } else {
@@ -163,7 +163,7 @@
                     value="<?php echo isset($_GET['minPrijs']) ? htmlspecialchars($_GET['minPrijs']) : ''; ?>">
 
                 <label for="maxPrijs">Max. prijs:</label>
-                <input type="number" id="maxPrijs" name="maxPrijs" placeholder="€100" 
+                <input type="number" id="maxPrijs" name="maxPrijs" placeholder="€50" 
                     value="<?php echo isset($_GET['maxPrijs']) ? htmlspecialchars($_GET['maxPrijs']) : ''; ?>">
 
                 <button type="submit">Filter</button>

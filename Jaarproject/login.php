@@ -160,14 +160,14 @@ body {
                     <div class="breadcrumb__text">
                     <body>
                     <div class="login-container">
-    <h2>Admin Login</h2>
-    <form method="POST">
-        <input type="text" name="username" placeholder="Gebruikersnaam" required>
-        <input type="password" name="password" placeholder="Wachtwoord" required>
-        <button type="submit">Login</button>
-    </form>
-    <p class="error-message"><?php echo $error; ?></p>
-</div>
+                    <h2>Admin Login</h2>
+                    <form method="POST">
+                        <input type="text" name="username" placeholder="Gebruikersnaam" required>
+                        <input type="password" name="password" placeholder="Wachtwoord" required>
+                        <button type="submit">Login</button>
+                    </form>
+                    <p class="error-message"><?php echo $error; ?></p>
+                </div>
 
                         </div>
                     </div>
