@@ -73,150 +73,7 @@ if (mysqli_connect_errno()) {
 <html lang="zxx">
 
 <head>
-    <style>
-        /* Algemene stijlen */
-body {
-    font-family: 'Josefin Sans', sans-serif;
-    background-color: #a788d6; /* Lichte paarse achtergrond */
-    color: #2a2a2a; /* Donkere grijstint voor tekst */
-    margin: 0;
-    padding: 0;
-}
-h3, h4 {
-    text-align: center;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-top: 20px;
-}
-
-h3 {
-    font-size: 32px;
-    color: #4a105c;
-    border-bottom: 3px solid #815ac0;
-    display: inline-block;
-    padding-bottom: 5px;
-}
-
-h4 {
-    font-size: 26px;
-    color: #6a1b9a;
-    border-bottom: 2px solid #9b3cd6;
-    display: inline-block;
-    padding-bottom: 3px;
-}
-/* Header */
-.header {
-    background-color: #815ac0;
-    padding: 15px 0;
-}
-
-.header__nav__menu ul {
-    list-style: none;
-    display: flex;
-    justify-content: right;
-    padding: 0;
-}
-
-.header__nav__menu ul li {
-    margin: 0 15px;
-}
-
-.header__nav__menu ul li a {
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 18px;
-    transition: 0.3s;
-}
-
-.header__nav__menu ul li a:hover {
-    color: #ffccff;
-}
-
-/* Welkomstbericht */
-.breadcrumb__text h2 {
-    font-size: 28px;
-    color: #4a105c;
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-.breadcrumb__text p {
-    font-size: 18px;
-    color: #2a2a2a;
-}
-
-/* Tabellen */
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.table th {
-    background-color: #4a105c;
-    color: #ffffff;
-    font-size: 18px;
-    padding: 12px;
-    text-align: left;
-}
-
-/* Alternatieve rijkleuren voor betere zichtbaarheid */
-.table tr:nth-child(odd) {
-    background-color: #f3e7ff; /* Zachte pastelkleur */
-}
-
-.table tr:nth-child(even) {
-    background-color: #dfc7f2; /* Iets donkerdere paarstint */
-}
-
-.table tr:hover {
-    background-color: #e4d3f7; /* Opvallende hoverkleur */
-}
-
-.table td {
-    padding: 12px;
-    color: #2a2a2a;
-}
-
-/* Knoppen */
-a, button {
-    display: inline-block;
-    padding: 10px 15px;
-    background-color: #6a1b9a;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: 0.3s ease-in-out;
-    font-size: 16px;
-}
-
-
-
-/* Formulieren */
-form {
-    background: #dfc7f2;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-.form-group label {
-    font-size: 16px;
-    color: #4a105c;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    background: #f3e7ff;
-    border: 1px solid #815ac0;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-
-
-
-    </style>
+<link rel="stylesheet" href="admin.css" type="text/css">
     <meta charset="UTF-8">
     <meta name="description" content="Homepage">
     <meta name="keywords" content="Videograph, unica, creative, html">
@@ -284,7 +141,7 @@ form {
                     <body>
                     <body>
                             <h2>Welkom, Admin!</h2>
-                            <p>Je bent ingelogd als beheerder.</p>
+                            <h4>Je bent ingelogd als beheerder.</h4>
                             
                     </body>
                         </div>
@@ -376,7 +233,7 @@ form {
                         <th>Categorie</th>
                         <th>Beoordeling</th>
                         <th>Aantal in voorraad</th>
-                        <th>Acties</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -390,9 +247,7 @@ form {
                             <td><?php echo htmlspecialchars(isset($categories[$row['categorieid']]) ? $categories[$row['categorieid']] : 'Onbekend'); ?></td>
                             <td><?php echo $row['beoordeling']; ?> / 5</td>
                             <td><?php echo $row['aantalinvoorraad']; ?></td>
-                                <td>
-                                    <a href="?action=hide&id=<?php echo $row['productid']; ?>">Verberg</a>
-                                </td>
+                                
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
