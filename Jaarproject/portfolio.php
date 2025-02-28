@@ -45,10 +45,15 @@
                     $sql .= " ORDER BY prijs ASC";
                 } elseif ($sorteer == "prijs_desc") {
                     $sql .= " ORDER BY prijs DESC";
+                } elseif ($sorteer == "titel_asc") {
+                    $sql .= " ORDER BY titel ASC";
+                } elseif ($sorteer == "titel_desc") {
+                    $sql .= " ORDER BY titel DESC";
                 }
             } else {
-                $sql .= " ORDER BY titel $order";
+                $sql .= " ORDER BY titel ASC"; 
             }
+            
         
             
             if ($stmt = $mysqli->prepare($sql)) {
@@ -150,10 +155,17 @@
                     </form>
                 </div> <div class="sort-container">
                 <label for="sorteren">Sorteer op:</label>
-                <select id="sorteren" onchange="sorteerFilms()">
-                    <option value="asc" <?php echo ($order == 'ASC') ? 'selected' : ''; ?>>A-Z</option>
-                    <option value="desc" <?php echo ($order == 'DESC') ? 'selected' : ''; ?>>Z-A</option>
+                <form method="GET" action="portfolio.php" class="search-form">
+                <select name="sorteer" onchange="filterFilms()">
+                    <option value="">-------Selecteer-------</option>
+                    <option value="prijs_asc" <?php if (isset($_GET['sorteer']) && $_GET['sorteer'] == 'prijs_asc') echo 'selected'; ?>>Prijs laag → hoog</option>
+                    <option value="prijs_desc" <?php if (isset($_GET['sorteer']) && $_GET['sorteer'] == 'prijs_desc') echo 'selected'; ?>>Prijs hoog → laag</option>
+                    <option value="titel_asc" <?php if (isset($_GET['sorteer']) && $_GET['sorteer'] == 'titel_asc') echo 'selected'; ?>>Titel A → Z</option>
+                    <option value="titel_desc" <?php if (isset($_GET['sorteer']) && $_GET['sorteer'] == 'titel_desc') echo 'selected'; ?>>Titel Z → A</option>
                 </select>
+               
+            </form>
+
             </div>
             <form method="GET" action="portfolio.php" class="search-form">
             <div class="filter-container">
@@ -170,13 +182,9 @@
                 </div>
                 
             </form>
-            <div class="sort-container">
-            <label for="sorteer">Sorteer op:</label>
-                <select name="sorteer" id="sorteer" onchange="filterFilms()">
-                    <option value="">-- Selecteer --</option>
-                    <option value="prijs_asc" <?php if (isset($_GET['sorteer']) && $_GET['sorteer'] == 'prijs_asc') echo 'selected'; ?>>Prijs (Laag → Hoog)</option>
-                    <option value="prijs_desc" <?php if (isset($_GET['sorteer']) && $_GET['sorteer'] == 'prijs_desc') echo 'selected'; ?>>Prijs (Hoog → Laag)</option>
-                </select></div>
+            
+            
+                
 
                         </div>
                     </div>
@@ -273,23 +281,17 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
     <script>
-function sorteerFilms() {
-    var sorteerVolgorde = document.getElementById("sorteren").value;
-    var zoekterm = "<?php echo isset($_GET['zoekterm']) ? urlencode($_GET['zoekterm']) : ''; ?>";
-    window.location.href = "portfolio.php?order=" + sorteerVolgorde + (zoekterm ? "&zoekterm=" + zoekterm : "");
-}
 function filterFilms() {
-    let sorteerOptie = document.getElementById('sorteer').value;
-    let url = new URL(window.location.href);
+    let zoekterm = document.querySelector("input[name='zoekterm']").value;
+    let sorteerOptie = document.querySelector("select[name='sorteer']").value;
     
-    if (sorteerOptie) {
-        url.searchParams.set('sorteer', sorteerOptie);
-    } else {
-        url.searchParams.delete('sorteer');
-    }
-
+    let url = new URL(window.location.href);
+    url.searchParams.set('zoekterm', zoekterm);
+    url.searchParams.set('sorteer', sorteerOptie);
+    
     window.location.href = url.toString();
 }
+
 
 </script>
 

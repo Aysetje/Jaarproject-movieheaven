@@ -8,7 +8,7 @@ if (mysqli_connect_errno()) {
 
     // Klant toevoegen
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['naam'])) {
-        $klantid = $_POST['klantid'];
+        $klantid = intval($next_klantid);
         $naam = $_POST['naam'];
         $adres = $_POST['adres'];
         $postcodeid = $_POST['postcodeid'];
@@ -16,7 +16,7 @@ if (mysqli_connect_errno()) {
 
         $insert_sql = "INSERT INTO tblklanten (klantid, naam, adres, postcodeid, email) VALUES (?, ?, ?, ?, ?)";
         $stmt = $mysqli->prepare($insert_sql);
-        $stmt->bind_param("sssss", $klantid, $naam, $adres, $postcodeid, $email);
+        $stmt->bind_param("issss", $klantid, $naam, $adres, $postcodeid, $email);
         $stmt->execute();
     }
     // Klant gegevens wijzigen
@@ -135,10 +135,10 @@ if (mysqli_connect_errno()) {
     <!-- Breadcrumb Begin -->
     <div class="breadcrumb-option spad set-bg" data-setbg="img/breadcrumb-bg.jpg">
         <div class="container">
-            <div class="row">
+            
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb__text">
-                    <body>
+                    
                     <body>
                             <h2>Welkom, Admin!</h2>
                             <h4>Je bent ingelogd als beheerder.</h4>
@@ -146,11 +146,9 @@ if (mysqli_connect_errno()) {
                     </body>
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
     </div>
-    
+     
     <!-- Breadcrumb End -->
      <!-- Breadcrumb Begin -->
     <div class="breadcrumb-option spad set-bg" data-setbg="img/breadcrumb-bg.jpg">
@@ -161,7 +159,8 @@ if (mysqli_connect_errno()) {
             <form action="" method="POST">
                 <div class="form-group">
                     <label for="klantid">Klant ID:</label>
-                    <input type="text" class="form-control" id="klantid" name="klantid" required>
+                    <input type="text" class="form-control" id="klantid" name="klantid" value="<?php echo $next_klantid; ?>" readonly>
+
                 </div>
                 <div class="form-group">
                     <label for="naam">Naam:</label>
@@ -191,21 +190,21 @@ if (mysqli_connect_errno()) {
                         <th>Adres</th>
                         <th>Postcode ID</th>
                         <th>Email</th>
-                        <th>Acties</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ($klanten_result->num_rows > 0): ?>
                         <?php while ($klant = $klanten_result->fetch_assoc()): ?>
                             <tr>
-                                <td><?php echo $klant['klantid']; ?></td>
-                                <td><?php echo htmlspecialchars($klant['naam']); ?></td>
-                                <td><?php echo htmlspecialchars($klant['adres']); ?></td>
-                                <td><?php echo htmlspecialchars($klant['postcodeid']); ?></td>
-                                <td><?php echo htmlspecialchars($klant['email']); ?></td>
-                                <td>
-                                    <a href="?action=edit&id=<?php echo $klant['klantid']; ?>">Wijzig</a>
-                                </td>
+                            
+                            <td contenteditable="true" onBlur="updateKlant(<?php echo $klant['klantid']; ?>, 'klantid', this.innerText)"><?php echo $klant['klantid']; ?></td> 
+                    
+                            <td contenteditable="true" onBlur="updateKlant(<?php echo $klant['klantid']; ?>, 'naam', this.innerText)"><?php echo htmlspecialchars($klant['naam']); ?>
+                            <td contenteditable="true" onBlur="updateKlant(<?php echo $klant['klantid']; ?>, 'adres', this.innerText)"><?php echo htmlspecialchars($klant['adres']); ?></td>
+                            <td contenteditable="true" onBlur="updateKlant(<?php echo $klant['klantid']; ?>, 'postcodeid', this.innerText)"><?php echo htmlspecialchars($klant['postcodeid']); ?></td>
+                            <td contenteditable="true" onBlur="updateKlant(<?php echo $klant['klantid']; ?>, 'email', this.innerText)"><?php echo htmlspecialchars($klant['email']); ?></td>
+
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
@@ -297,6 +296,25 @@ if (mysqli_connect_errno()) {
     <script src="js/jquery.slicknav.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+  <script>  function updateKlant(klantid, veld, waarde) {
+    fetch('update_klant.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `klantid=${klantid}&veld=${veld}&waarde=${encodeURIComponent(waarde)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data); // Controleer wat de server terugstuurt
+        if (!data.success) {
+            alert("Fout: " + data.message);
+        } else {
+            console.log("Klant succesvol bijgewerkt!");
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+</script>
 </body>
 
 </html>
