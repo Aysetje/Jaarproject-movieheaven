@@ -1,4 +1,5 @@
 <?php
+session_start();
     $mysqli = new MySQLI("localhost","root","","movieheavenphp");
 
     if(mysqli_connect_errno()){
@@ -141,6 +142,7 @@
                             <li class="active"><a href="./portfolio.php">Producten</a></li>
                             <li><a href="./contact.html">Contact</a></li>
                             <li><a href="./login.php">Login</a></li>
+                            <li><a href="./winkelwagen.php">Winkelwagen</a></li>
                         </ul>
                     </nav>
                     
@@ -225,18 +227,23 @@
     <?php
     if (!empty($films)) {
         foreach ($films as $film) {
-            echo '<div class="work__item">   
+            echo '<div class="work__item">
                 <a href="film.php?id=' . $film['productid'] . '">
                     <img src="uploads/' . htmlspecialchars($film['foto']) . '" alt="' . htmlspecialchars($film['titel']) . '" class="img-fluid">
                     <div class="work__text">
                         <h5>' . htmlspecialchars($film['titel']) . '</h5>
                         <p>' . htmlspecialchars($film['omschrijving']) . '</p>
                         <strong>€' . number_format($film['prijs'], 2, ',', '.') . '</strong>
-                    </div>   
+                    </div>
                 </a>
+                <form action="winkelwagen.php" method="post">
+                    <input type="hidden" name="id" value="' . $film['productid'] . '">
+                    <button type="submit" class="toevoegen-knop">➕</button>
+                </form>
             </div>';
         }
-    } else {
+    }
+     else {
         // Toon dit als er geen films zijn gevonden
         $zoekterm_weergeven = htmlspecialchars($zoekterm);
         $zoekterm_weergeven = str_replace('%', '', $zoekterm_weergeven); 
