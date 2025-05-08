@@ -136,8 +136,23 @@ h1 {
 </div>
 
 <!-- Header Section Begin -->
-
+<!-- Breadcrumb Begin -->
 <div class="breadcrumb-option spad set-bg" data-setbg="img/breadcrumb-bg.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <h2>Jouw winkelwagen</h2>
+                        <div class="breadcrumb__links">
+                            <a href="./index.html">Home</a>
+                            <span>Jouw winkelwagen</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <header class="header">
 <div class="container">
     <div class="row">
@@ -145,16 +160,17 @@ h1 {
             <div class="header__logo">
                 <a href="./index.html"><img src="img/logo/movieheaven_logo.png" alt="" height="130px" width="140px"></a>
             </div>
+            
         </div>
         <div class="col-lg-10">
             <div class="header__nav__option">
                 <nav class="header__nav__menu mobile-menu">
                     <ul>
                         <li><a href="./index.html">Home</a></li>
-                        <li class="active"><a href="./portfolio.php">Producten</a></li>
+                        <li ><a href="./portfolio.php">Producten</a></li>
                         <li><a href="./contact.html">Contact</a></li>
                         <li><a href="./login.php">Login</a></li>
-                        <li><a href="./winkelwagen.php">Winkelwagen</a></li>
+                        <li class="active"><a href="./winkelwagen.php">Winkelwagen</a></li>
                     </ul>
                 </nav>
 
@@ -163,10 +179,11 @@ h1 {
                     </div>
                 </div>
             </div>
-        </div>
+        
     </div>
+    <br><br>    <br><br>
     <div class="winkelwagen-wrapper">
-    <h1>Jouw Winkelwagen</h1>
+    
 
     <?php if (empty($producten)): ?>
         <p>Je winkelwagen is leeg.</p>
