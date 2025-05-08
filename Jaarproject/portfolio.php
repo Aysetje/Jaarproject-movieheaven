@@ -236,10 +236,12 @@ session_start();
                         <strong>€' . number_format($film['prijs'], 2, ',', '.') . '</strong>
                     </div>
                 </a>
-                <form action="winkelwagen.php" method="post">
-                    <input type="hidden" name="id" value="' . $film['productid'] . '">
-                    <button type="submit" class="toevoegen-knop">➕</button>
-                </form>
+                <form action="winkelwagen.php" method="POST">
+    <input type="hidden" name="id" value="' . $film['productid'] . '">
+    <input type="number" name="aantal" value="1" min="1">
+    <button type="submit" class="toevoegen-knop">➕</button>
+</form>
+
             </div>';
         }
     }

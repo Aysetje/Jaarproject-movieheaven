@@ -1,12 +1,14 @@
 <?php
 session_start();
+
+$producten_in_winkelwagen = isset($_SESSION['winkelwagen']) ? $_SESSION['winkelwagen'] : [];
 $mysqli = new MySQLI("localhost", "root", "", "movieheavenphp");
 
 if (mysqli_connect_errno()) {
     trigger_error('Fout bij verbinding: ' . $mysqli->error);
 }
 
-$producten_in_winkelwagen = $_SESSION['winkelwagen'] ?? [];
+
 $totaalprijs = 0;
 
 $producten = [];
@@ -14,8 +16,10 @@ $producten = [];
 if (!empty($producten_in_winkelwagen)) {
     $ids = implode(',', array_map('intval', array_keys($producten_in_winkelwagen)));
 
-    $query = "SELECT * FROM tblproducten WHERE productid IN ($ids)";
-    $result = $mysqli->query($query);
+    if ($ids) { // Zorg ervoor dat de query alleen wordt uitgevoerd als er daadwerkelijk product-ID's zijn
+        $query = "SELECT * FROM tblproducten WHERE productid IN ($ids)";
+        $result = $mysqli->query($query);
+    }
 
     if ($result) {
         while ($row = $result->fetch_assoc()) {
@@ -25,19 +29,25 @@ if (!empty($producten_in_winkelwagen)) {
         }
     }
 }
+
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productId = $_POST['id'];
-    $quantity = 1; 
+    $aantal = intval($_POST['aantal']);
 
-    if (isset($_SESSION['winkelwagen'][$productId])) {
-        $_SESSION['winkelwagen'][$productId] += $quantity;
-    } else {
-        $_SESSION['winkelwagen'][$productId] = $quantity;
-    }
     
-    header("Location: portfolio.php");
+    if ($aantal > 0) {
+        $_SESSION['winkelwagen'][$productId] = $aantal;
+    } else {
+        unset($_SESSION['winkelwagen'][$productId]); 
+    }
+
+   
+    header("Location: winkelwagen.php");
     exit();
 }
+
 
 ?>
 
@@ -51,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <style>
         .winkelwagen-tabel {
-    margin: 30px auto; /* centreren */
-    background-color: #3b0066; /* donkerpaars */
+    margin: 30px auto;
+    background-color: #3b0066; 
     color: white;
     border-collapse: collapse;
     width: 80%;
@@ -68,7 +78,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 .winkelwagen-tabel th {
-    background-color: #2a004d; /* iets donkerder paars voor kop */
+    background-color: #2a004d; 
+
+}
+.winkelwagen-tabels a,.winkelwagen-tabels button{
+    padding: 15px !important;
+    text-align: center;
+    border: 1px solid #ffffff30;
+    
 }
 html, body{
 background-color:rgb(27, 15, 78) !important; 
@@ -182,41 +199,51 @@ h1 {
         
     </div>
     <br><br>    <br><br>
-    <div class="winkelwagen-wrapper">
+    <form method="post" action="winkelwagen.php">
+    <table class="winkelwagen-tabel">
+        <thead>
+            <tr>
+                <th>Afbeelding</th>
+                <th>Titel</th>
+                <th>Prijs</th>
+                <th>Aantal</th>
+                <th>Subtotaal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($producten as $product): ?>
+                <tr>
+                    <td><img src="uploads/<?php echo htmlspecialchars($product['foto']); ?>" alt="" height="100"></td>
+                    <td><?php echo htmlspecialchars($product['titel']); ?></td>
+                    <td>€<?php echo number_format($product['prijs'], 2, ',', '.'); ?></td>
+                    <td>
+                        <input type="number" name="aantal[<?php echo $product['productid']; ?>]" value="<?php echo $product['aantal']; ?>" min="0" style="width: 60px;">
+                    </td>
+                    <td>€<?php echo number_format($product['prijs'] * $product['aantal'], 2, ',', '.'); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    
+    <button type="submit" class="btn btn-primary" style="margin-left:200px;">Winkelwagen bijwerken</button>
+</form>
+
+<a href="winkelwagen.php?leeg=true" class="btn btn-danger" style="margin-left:200px;">Winkelwagen leegmaken</a>
+<?php
+if (isset($_GET['leeg'])) {
+    unset($_SESSION['winkelwagen']);
+    header("Location: winkelwagen.php");
+    exit();
+}
+
+?>
+        <h3 style="margin-left:1300px;">Totaal: €<?php echo number_format($totaalprijs, 2, ',', '.'); ?></h3>
+        <br>
+        <a href="afrekenen.php" class="btn btn-primary" style="margin-left:1300px;">Verder naar afrekenen</a><br><br>
     
 
-    <?php if (empty($producten)): ?>
-        <p>Je winkelwagen is leeg.</p>
-    <?php else: ?>
-        <table class="winkelwagen-tabel">
+    <p><a href="portfolio.php" style="margin-left:1300px;">← Verder winkelen</a></p>
 
-            <thead>
-                <tr>
-                    <th>Afbeelding</th>
-                    <th>Titel</th>
-                    <th>Prijs</th>
-                    <th>Aantal</th>
-                    <th>Subtotaal</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($producten as $product): ?>
-                    <tr>
-                        <td><img src="uploads/<?php echo htmlspecialchars($product['foto']); ?>" alt="" height="100"></td>
-                        <td><?php echo htmlspecialchars($product['titel']); ?></td>
-                        <td>€<?php echo number_format($product['prijs'], 2, ',', '.'); ?></td>
-                        <td><?php echo $product['aantal']; ?></td>
-                        <td>€<?php echo number_format($product['prijs'] * $product['aantal'], 2, ',', '.'); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <h3>Totaal: €<?php echo number_format($totaalprijs, 2, ',', '.'); ?></h3>
-        <a href="afrekenen.php" class="btn btn-primary">Verder naar afrekenen</a><br><br>
-    <?php endif; ?>
-
-    <p><a href="portfolio.php">← Verder winkelen</a></p>
-    </div>
 <!-- Footer Section Begin -->
 <footer class="footer">
         
