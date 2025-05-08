@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 27, 2025 at 10:02 PM
+-- Generation Time: May 09, 2025 at 01:17 AM
 -- Server version: 5.7.17
--- PHP Version: 5.6.30
+-- PHP Version: 7.4.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -21,6 +21,107 @@ SET time_zone = "+00:00";
 --
 -- Database: `movieheavenphp`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblbestellingen`
+--
+
+CREATE TABLE `tblbestellingen` (
+  `bestellingid` int(11) NOT NULL,
+  `klantid` int(11) NOT NULL,
+  `bestellingsdatum` date NOT NULL,
+  `status` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tblbestellingen`
+--
+
+INSERT INTO `tblbestellingen` (`bestellingid`, `klantid`, `bestellingsdatum`, `status`) VALUES
+(1, 1, '2025-05-08', 'Voltooid'),
+(2, 1, '2025-05-08', 'Voltooid'),
+(3, 1, '2025-05-08', 'Voltooid'),
+(4, 1, '2025-05-08', 'Voltooid'),
+(5, 1, '2025-05-08', 'Voltooid'),
+(6, 3, '2025-05-08', 'Voltooid'),
+(7, 3, '2025-05-08', 'Voltooid'),
+(8, 3, '2025-05-08', 'Voltooid'),
+(9, 3, '2025-05-08', 'Voltooid'),
+(10, 3, '2025-05-08', 'Voltooid'),
+(11, 3, '2025-05-08', 'Voltooid'),
+(12, 3, '2025-05-08', 'Voltooid'),
+(13, 3, '2025-05-08', 'Voltooid'),
+(14, 3, '2025-05-08', 'Voltooid'),
+(15, 3, '2025-05-08', 'Voltooid'),
+(16, 3, '2025-05-08', 'Voltooid'),
+(17, 3, '2025-05-08', 'Voltooid'),
+(18, 3, '2025-05-08', 'Voltooid'),
+(19, 3, '2025-05-08', 'Voltooid'),
+(20, 3, '2025-05-08', 'Voltooid'),
+(21, 3, '2025-05-08', 'Voltooid'),
+(22, 3, '2025-05-08', 'Voltooid'),
+(23, 3, '2025-05-08', 'Voltooid'),
+(24, 3, '2025-05-09', 'Voltooid'),
+(25, 3, '2025-05-09', 'Voltooid');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblbestellingslijnen`
+--
+
+CREATE TABLE `tblbestellingslijnen` (
+  `bestellingsid` int(11) NOT NULL,
+  `productid` int(11) NOT NULL,
+  `aantal` int(11) NOT NULL,
+  `verkoopprijs` decimal(10,0) NOT NULL,
+  `korting` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tblbestellingslijnen`
+--
+
+INSERT INTO `tblbestellingslijnen` (`bestellingsid`, `productid`, `aantal`, `verkoopprijs`, `korting`) VALUES
+(7, 1, 2, '25', 0),
+(7, 4, 1, '11', 0),
+(7, 9, 1, '20', 0),
+(8, 6, 1, '25', 0),
+(8, 7, 1, '19', 0),
+(8, 3, 1, '23', 0),
+(8, 5, 2, '16', 0),
+(9, 9, 1, '20', 0),
+(10, 4, 1, '11', 0),
+(11, 4, 1, '11', 0),
+(11, 1, 2, '25', 0),
+(12, 4, 1, '11', 0),
+(12, 1, 2, '25', 0),
+(13, 4, 1, '11', 0),
+(13, 1, 2, '25', 0),
+(14, 4, 1, '11', 0),
+(14, 1, 2, '25', 0),
+(15, 4, 1, '11', 0),
+(15, 1, 2, '25', 0),
+(16, 4, 1, '11', 0),
+(16, 1, 2, '25', 0),
+(17, 4, 1, '11', 0),
+(17, 1, 2, '25', 0),
+(18, 4, 1, '11', 0),
+(18, 1, 2, '25', 0),
+(19, 4, 1, '11', 0),
+(19, 1, 2, '25', 0),
+(20, 4, 1, '11', 0),
+(20, 1, 2, '25', 0),
+(21, 4, 1, '11', 0),
+(21, 1, 2, '25', 0),
+(22, 4, 1, '11', 0),
+(22, 1, 2, '25', 0),
+(23, 9, 3, '20', 0),
+(24, 1, 1, '25', 0),
+(24, 6, 1, '25', 0),
+(25, 1, 1, '25', 0);
 
 -- --------------------------------------------------------
 
@@ -69,7 +170,8 @@ CREATE TABLE `tblklanten` (
 
 INSERT INTO `tblklanten` (`klantid`, `naam`, `adres`, `postcodeid`, `email`) VALUES
 (1, 'Ayse Uckuyulu', 'Kortrijksesteenweg 12', 2, 'kendet@gmail.com'),
-(2, 'Pieter', 'Sesamstraat 1', 5, 'pieterjan@gmail.com');
+(2, 'Pieter', 'Sesamstraat 1', 5, 'pieterjan@gmail.com'),
+(3, 'Testklant', 'Teststraat 1', 9000, 'test@klant.be');
 
 -- --------------------------------------------------------
 
@@ -109,6 +211,12 @@ INSERT INTO `tblproducten` (`productid`, `titel`, `omschrijving`, `prijs`, `cate
 --
 
 --
+-- Indexes for table `tblbestellingen`
+--
+ALTER TABLE `tblbestellingen`
+  ADD PRIMARY KEY (`bestellingid`);
+
+--
 -- Indexes for table `tblcategorie`
 --
 ALTER TABLE `tblcategorie`
@@ -131,6 +239,11 @@ ALTER TABLE `tblproducten`
 --
 
 --
+-- AUTO_INCREMENT for table `tblbestellingen`
+--
+ALTER TABLE `tblbestellingen`
+  MODIFY `bestellingid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+--
 -- AUTO_INCREMENT for table `tblcategorie`
 --
 ALTER TABLE `tblcategorie`
@@ -139,7 +252,7 @@ ALTER TABLE `tblcategorie`
 -- AUTO_INCREMENT for table `tblklanten`
 --
 ALTER TABLE `tblklanten`
-  MODIFY `klantid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `klantid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `tblproducten`
 --
