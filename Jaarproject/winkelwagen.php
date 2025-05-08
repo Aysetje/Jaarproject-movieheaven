@@ -16,10 +16,8 @@ $producten = [];
 if (!empty($producten_in_winkelwagen)) {
     $ids = implode(',', array_map('intval', array_keys($producten_in_winkelwagen)));
 
-    if ($ids) { // Zorg ervoor dat de query alleen wordt uitgevoerd als er daadwerkelijk product-ID's zijn
-        $query = "SELECT * FROM tblproducten WHERE productid IN ($ids)";
-        $result = $mysqli->query($query);
-    }
+    $query = "SELECT * FROM tblproducten WHERE productid IN ($ids)";
+    $result = $mysqli->query($query);
 
     if ($result) {
         while ($row = $result->fetch_assoc()) {
