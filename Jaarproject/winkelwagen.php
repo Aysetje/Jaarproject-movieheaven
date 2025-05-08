@@ -41,14 +41,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 
-
+<html>
 <meta charset="UTF-8">
 <meta name="description" content="Producten">
 <meta name="keywords" content="Videograph, unica, creative, html">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>Winkelwagen</title>
+<head>
+    <style>
+        .winkelwagen-tabel {
+    margin: 30px auto; /* centreren */
+    background-color: #3b0066; /* donkerpaars */
+    color: white;
+    border-collapse: collapse;
+    width: 80%;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
+.winkelwagen-tabel th,
+.winkelwagen-tabel td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ffffff30;
+}
+
+.winkelwagen-tabel th {
+    background-color: #2a004d; /* iets donkerder paars voor kop */
+}
+html, body{
+background-color:rgb(27, 15, 78) !important; 
+}
+h1 {
+    text-align: center;
+    margin-top: 40px;
+    color: white;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 3rem;
+}
+
+.winkelwagen-wrapper {
+    text-align: center;
+    margin: 40px auto;
+    color: white;
+}
+
+.winkelwagen-wrapper h3 {
+    margin-top: 30px;
+    font-size: 1.8rem;
+}
+
+.winkelwagen-wrapper a.btn {
+    margin-top: 20px;
+    background-color: #6a1b9a;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    color: white;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.winkelwagen-wrapper a.btn:hover {
+    background-color: #8e24aa;
+}
+
+.winkelwagen-wrapper p a {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+    </style>
 <!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap"
@@ -72,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!-- Header Section Begin -->
 
-
+<div class="breadcrumb-option spad set-bg" data-setbg="img/breadcrumb-bg.jpg">
 <header class="header">
 <div class="container">
     <div class="row">
@@ -93,13 +158,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </ul>
                 </nav>
 
-
+                
+       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="winkelwagen-wrapper">
     <h1>Jouw Winkelwagen</h1>
 
     <?php if (empty($producten)): ?>
         <p>Je winkelwagen is leeg.</p>
     <?php else: ?>
-        <table border="1" cellpadding="10" cellspacing="0">
+        <table class="winkelwagen-tabel">
+
             <thead>
                 <tr>
                     <th>Afbeelding</th>
@@ -122,10 +195,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </tbody>
         </table>
         <h3>Totaal: €<?php echo number_format($totaalprijs, 2, ',', '.'); ?></h3>
-        <a href="afrekenen.php" class="btn btn-primary">Verder naar afrekenen</a>
+        <a href="afrekenen.php" class="btn btn-primary">Verder naar afrekenen</a><br><br>
     <?php endif; ?>
 
     <p><a href="portfolio.php">← Verder winkelen</a></p>
+    </div>
 <!-- Footer Section Begin -->
 <footer class="footer">
         
