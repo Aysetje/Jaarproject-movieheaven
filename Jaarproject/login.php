@@ -6,17 +6,28 @@ if (isset($_SESSION['admin'])) {
 }
 
 $error = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
     
-    $correct_username = "admin";
-    $correct_password = "password123";
-
-    if ($username === $correct_username && $password === $correct_password) {
-        $_SESSION['admin'] = true;
+    if ($username === "admin" && $password === "password123") {
+        $_SESSION['functie'] = 'admin';
+        $_SESSION['gebruiker_id'] = 'admin';
         header("Location: admin.php");
+        exit();
+    }
+
+    
+    $stmt = $conn->prepare("SELECT * FROM klanten WHERE email = ?");
+    $stmt->execute([$username]);
+    $gebruiker = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($gebruiker && password_verify($password, $gebruiker['wachtwoord'])) {
+        $_SESSION['functie'] = 'klant';
+        $_SESSION['gebruiker_id'] = $gebruiker['id'];
+        header("Location: portfolio.php");
         exit();
     } else {
         $error = "Ongeldige gebruikersnaam of wachtwoord.";
@@ -167,6 +178,8 @@ body {
                         <button type="submit">Login</button>
                     </form>
                     <p class="error-message"><?php echo $error; ?></p>
+                    <p>Nog geen account? <a href="register.php" style="color: #ff4c4c;">Registreer hier</a></p>
+
                 </div>
 
                         </div>
