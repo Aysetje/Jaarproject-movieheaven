@@ -1,33 +1,39 @@
 <?php
 session_start();
-if (isset($_SESSION['admin'])) {
-    header("Location: admin.php");
-    exit();
-}
+$mysqli = new MySQLI("localhost","root","","movieheavenphp");
+
+    if(mysqli_connect_errno()){
+        trigger_error('Fout bij verbinding: ' . $mysqli->error);
+    }
+
+
 
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
+    $mail = $_POST['email'];
     $password = $_POST['password'];
 
     
-    if ($username === "admin" && $password === "password123") {
+    if ($mail === "admin@gmail.com" && $password === "password123") {
         $_SESSION['functie'] = 'admin';
         $_SESSION['gebruiker_id'] = 'admin';
-        header("Location: admin.php");
+        header("Location: adminDashboard.php");
         exit();
     }
 
     
-    $stmt = $conn->prepare("SELECT * FROM klanten WHERE email = ?");
-    $stmt->execute([$username]);
-    $gebruiker = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $mysqli->prepare("SELECT * FROM tblklanten WHERE email = ?");
+    $stmt->bind_param("s", $mail);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $gebruiker = $result->fetch_assoc();
+
 
     if ($gebruiker && password_verify($password, $gebruiker['wachtwoord'])) {
         $_SESSION['functie'] = 'klant';
-        $_SESSION['gebruiker_id'] = $gebruiker['id'];
-        header("Location: portfolio.php");
+        $_SESSION['gebruiker_id'] = $gebruiker['klantid'];
+        header("Location: klantDashboard.php");
         exit();
     } else {
         $error = "Ongeldige gebruikersnaam of wachtwoord.";
@@ -110,7 +116,7 @@ body {
     <meta name="keywords" content="Videograph, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Homepage</title>
+    
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
@@ -169,11 +175,11 @@ body {
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb__text">
-                    <body>
+                    
                     <div class="login-container">
-                    <h2>Admin Login</h2>
+                    <h2>Login</h2>
                     <form method="POST">
-                        <input type="text" name="username" placeholder="Gebruikersnaam" required>
+                        <input type="email" name="email" placeholder="E-mailadres" required>
                         <input type="password" name="password" placeholder="Wachtwoord" required>
                         <button type="submit">Login</button>
                     </form>
@@ -202,28 +208,7 @@ body {
     </section>
     <!-- Call To Action Section End -->
 
-    <!-- Footer Section Begin -->
-    <footer id="foot">
-        <div class="container">
-            
-            <div class="footer__copyright">
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        <p class="footer__copyright__text">Copyright &copy;
-                            <script>
-                                document.write(new Date().getFullYear());
-                            </script>
-                            All rights reserved | This template is made with <i class="fa fa-heart-o"
-                                aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                        </p>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- Footer Section End -->
+    
 
     <!-- Js Plugins -->
     <script src="js/jquery-3.3.1.min.js"></script>

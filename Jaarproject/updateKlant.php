@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $veld = $_POST['veld'];
     $waarde = $_POST['waarde'];
 
-    // Voorkomen van SQL-injectie: alleen toegestane velden updaten
+   
     $allowed_fields = ['naam', 'adres', 'postcodeid', 'email'];
     if (!in_array($veld, $allowed_fields)) {
         echo json_encode(["success" => false, "message" => "Ongeldig veld"]);
