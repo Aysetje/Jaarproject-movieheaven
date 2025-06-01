@@ -1,11 +1,6 @@
 <?php
 session_start();
-$mysqli = new mysqli("localhost", "root", "", "movieheavenphp");
-if (!isset($_SESSION['gebruiker_id']) || $_SESSION['functie'] !== 'admin') {
-    header("Location: login.php");
-    exit();
-}
-
+require_once 'dbconnect.php';
 $adminid = $_SESSION['gebruiker_id'];
 
 $zoekterm = $_GET['zoekterm'] ?? '';

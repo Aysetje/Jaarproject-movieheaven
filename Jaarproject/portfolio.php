@@ -1,83 +1,78 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
-    $mysqli = new MySQLI("localhost","root","","movieheavenphp");
+require_once 'dbconnect.php';
 
-    if(mysqli_connect_errno()){
-        trigger_error('Fout bij verbinding: ' . $mysqli->error);
+if ($mysqli->connect_errno) {
+    trigger_error('Fout bij verbinding: ' . $mysqli->connect_error);
+} else {
+    $zoekterm = isset($_GET['zoekterm']) ? trim($_GET['zoekterm']) : '';
+    $order = isset($_GET['order']) && $_GET['order'] == 'desc' ? 'DESC' : 'ASC';
+    $sorteer = isset($_GET['sorteer']) ? $_GET['sorteer'] : '';
+    $minPrijs = isset($_GET['minPrijs']) ? (float) $_GET['minPrijs'] : null;
+    $maxPrijs = isset($_GET['maxPrijs']) ? (float) $_GET['maxPrijs'] : null;
+
+    
+    $sql = "SELECT * FROM tblproducten WHERE 1=1";
+    $params = [];
+    $types = "";
+
+    if (!empty($zoekterm)) {
+        $sql .= " AND titel LIKE ?";
+        $params[] = "%$zoekterm%";
+        $types .= "s";
     }
-    else{
-        
-        
-        
-        if ($mysqli->connect_errno) {
-            trigger_error('Fout bij verbinding: ' . $mysqli->connect_error);
-        } else {
-            $zoekterm = isset($_GET['zoekterm']) ? trim($_GET['zoekterm']) : '';
-            $order = isset($_GET['order']) && $_GET['order'] == 'desc' ? 'DESC' : 'ASC';
-            $sorteer = isset($_GET['sorteer']) ? $_GET['sorteer'] : '';
-            $minPrijs = isset($_GET['minPrijs']) ? (float) $_GET['minPrijs'] : null;
-            $maxPrijs = isset($_GET['maxPrijs']) ? (float) $_GET['maxPrijs'] : null;
-        
-           
-            $sql = "SELECT * FROM tblproducten WHERE 1=1";
-            $params = [];
-            $types = "";
-        
-            if (!empty($zoekterm)) {
-                $sql .= " AND titel LIKE ?";
-                $params[] = "%$zoekterm%";
-                $types .= "s";
-            }
-        
-            if (!empty($minPrijs)) {
-                $sql .= " AND prijs >= ?";
-                $params[] = $minPrijs;
-                $types .= "d";
-            }
-        
-            if (!empty($maxPrijs)) {
-                $sql .= " AND prijs <= ?";
-                $params[] = $maxPrijs;
-                $types .= "d";
-            }
-        
-            if (!empty($sorteer)) {
-                if ($sorteer == "prijs_asc") {
-                    $sql .= " ORDER BY prijs ASC";
-                } elseif ($sorteer == "prijs_desc") {
-                    $sql .= " ORDER BY prijs DESC";
-                } elseif ($sorteer == "titel_asc") {
-                    $sql .= " ORDER BY titel ASC";
-                } elseif ($sorteer == "titel_desc") {
-                    $sql .= " ORDER BY titel DESC";
-                }
-            } else {
-                $sql .= " ORDER BY titel ASC"; 
-            }
-            
-        
-            
-            if ($stmt = $mysqli->prepare($sql)) {
-                if (!empty($params)) {
-                    $stmt->bind_param($types, ...$params);
-                }
-        
-                if (!$stmt->execute()) {
-                    echo "Fout bij query: " . $stmt->error;
-                } else {
-                    $result = $stmt->get_result();
-                    $films = []; 
-        
-                    while ($row = $result->fetch_assoc()) {
-                        $films[] = $row; 
-                    }
-                }
-            } else {
-                echo "Er zit een fout in de query: " . $mysqli->error;
-            }
+
+    if (!empty($minPrijs)) {
+        $sql .= " AND prijs >= ?";
+        $params[] = $minPrijs;
+        $types .= "d";
+    }
+
+    if (!empty($maxPrijs)) {
+        $sql .= " AND prijs <= ?";
+        $params[] = $maxPrijs;
+        $types .= "d";
+    }
+
+    if (!empty($sorteer)) {
+        if ($sorteer == "prijs_asc") {
+            $sql .= " ORDER BY prijs ASC";
+        } elseif ($sorteer == "prijs_desc") {
+            $sql .= " ORDER BY prijs DESC";
+        } elseif ($sorteer == "titel_asc") {
+            $sql .= " ORDER BY titel ASC";
+        } elseif ($sorteer == "titel_desc") {
+            $sql .= " ORDER BY titel DESC";
+        }
+    } else {
+        $sql .= " ORDER BY titel ASC"; 
+    }
+    
+
+    
+    if ($stmt = $mysqli->prepare($sql)) {
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
         }
 
+        if (!$stmt->execute()) {
+            echo "Fout bij query: " . $stmt->error;
+        } else {
+            $result = $stmt->get_result();
+            $films = []; 
+
+            while ($row = $result->fetch_assoc()) {
+                $films[] = $row; 
+            }
+        }
+    } else {
+        echo "Er zit een fout in de query: " . $mysqli->error;
     }
+}
+
+    
 ?>
 <!DOCTYPE html>
 <html lang="zxx">

@@ -1,10 +1,6 @@
 <?php
-$mysqli = new MySQLI("localhost", "root", "", "movieheavenphp");
+require_once 'dbconnect.php';
 
-if (mysqli_connect_errno()) {
-    trigger_error('Fout bij verbinding: ' . $mysqli->error);
-} 
-else {
     if (isset($_GET['id'])) {
         $productid = $_GET['id'];
     } else {
@@ -13,7 +9,7 @@ else {
 
 $sql = "SELECT * FROM tblproducten WHERE productid = ?";
 
-}
+
 
 if ($stmt = $mysqli->prepare($sql)) {
 

@@ -1,12 +1,8 @@
 <?php
 if ((isset($_POST["verzenden"])) && (isset($_POST["naam"])) && ($_POST["naam"] != "") && (isset($_POST["prijs"])) && ($_POST["prijs"] != "") && isset($_POST['beoordeling'])) {
     
-    $mysqli = new MySQLi("localhost", "root", "", "movieheavenphp");
-
-    if (mysqli_connect_errno()) {
-        trigger_error('Fout bij verbinding: ' . $mysqli->error);
-    } 
-    else {
+   require_once 'dbconnect.php';
+    
        
 
         $foto = 'placeholder.jpg'; 
@@ -59,7 +55,7 @@ if ((isset($_POST["verzenden"])) && (isset($_POST["naam"])) && ($_POST["naam"] !
 }
 
 
-}
+
 
 
 ?>

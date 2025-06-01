@@ -1,11 +1,6 @@
 <?php
 session_start();
-$mysqli = new MySQLI("localhost", "root", "", "movieheavenphp");
-
-if (mysqli_connect_errno()) {
-    echo json_encode(["success" => false, "message" => "Database verbinding mislukt"]);
-    exit();
-}
+require_once 'dbconnect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $klantid = intval($_POST['klantid']);

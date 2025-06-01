@@ -6,10 +6,7 @@ if (empty($_SESSION['winkelwagen'])) {
     exit;
 }
 
-$mysqli = new mysqli("localhost", "root", "", "movieheavenphp");
-if ($mysqli->connect_errno) {
-    die("Fout bij verbinden met database: " . $mysqli->connect_error);
-}
+require_once 'dbconnect.php';
 
 $naam = "Testklant";
 $adres = "Teststraat 1";

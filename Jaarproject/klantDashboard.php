@@ -1,12 +1,7 @@
 <?php
 session_start();
 
-$mysqli = new mysqli("localhost", "root", "", "movieheavenphp");
-
-if (!isset($_SESSION['gebruiker_id']) || $_SESSION['functie'] !== 'klant') {
-    header("Location: login.php");
-    exit();
-}
+require_once 'dbconnect.php';
 
 $klantid = $_SESSION['gebruiker_id'];
 $success = $error = "";

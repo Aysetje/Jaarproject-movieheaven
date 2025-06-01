@@ -2,12 +2,7 @@
 session_start();
 
 $producten_in_winkelwagen = isset($_SESSION['winkelwagen']) ? $_SESSION['winkelwagen'] : [];
-$mysqli = new MySQLI("localhost", "root", "", "movieheavenphp");
-
-if (mysqli_connect_errno()) {
-    trigger_error('Fout bij verbinding: ' . $mysqli->error);
-}
-
+require_once 'dbconnect.php';
 
 $totaalprijs = 0;
 

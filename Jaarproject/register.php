@@ -1,10 +1,6 @@
 <?php 
 session_start();
-    $mysqli = new MySQLI("localhost","root","","movieheavenphp");
-
-    if(mysqli_connect_errno()){
-        trigger_error('Fout bij verbinding: ' . $mysqli->error);
-    }
+   require_once 'dbconnect.php';
 
 $error = "";
 $success = "";

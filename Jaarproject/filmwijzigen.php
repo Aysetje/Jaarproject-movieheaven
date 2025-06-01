@@ -1,12 +1,7 @@
 <?php
 if ((isset($_POST["verzenden"])) && isset($_POST["productid"]) && $_POST["productid"] != "" && isset($_POST["naam"]) && $_POST["naam"] != "" && isset($_POST["prijs"]) && $_POST["prijs"] != "" &&
     isset($_POST["beoordeling"])) {
-
-    $mysqli = new MySQLi("localhost", "root", "", "movieheavenphp");
-
-    if (mysqli_connect_errno()) {
-        trigger_error('Fout bij verbinding: ' . $mysqli->error);
-    } else {
+require_once 'dbconnect.php';
        
         $foto = $_POST['huidige_foto'];
         if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
@@ -64,7 +59,7 @@ if ((isset($_POST["verzenden"])) && isset($_POST["productid"]) && $_POST["produc
             echo 'Er zit een fout in de query: ' . $mysqli->error;
         }
     }
-}
+
 
 if (isset($_GET['id'])) {
     $productid = $_GET['id'];

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 09, 2025 at 01:17 AM
+-- Generation Time: Jun 01, 2025 at 04:09 PM
 -- Server version: 5.7.17
 -- PHP Version: 7.4.27
 
@@ -64,7 +64,8 @@ INSERT INTO `tblbestellingen` (`bestellingid`, `klantid`, `bestellingsdatum`, `s
 (22, 3, '2025-05-08', 'Voltooid'),
 (23, 3, '2025-05-08', 'Voltooid'),
 (24, 3, '2025-05-09', 'Voltooid'),
-(25, 3, '2025-05-09', 'Voltooid');
+(25, 3, '2025-05-09', 'Voltooid'),
+(26, 3, '2025-06-01', 'Voltooid');
 
 -- --------------------------------------------------------
 
@@ -121,7 +122,9 @@ INSERT INTO `tblbestellingslijnen` (`bestellingsid`, `productid`, `aantal`, `ver
 (23, 9, 3, '20', 0),
 (24, 1, 1, '25', 0),
 (24, 6, 1, '25', 0),
-(25, 1, 1, '25', 0);
+(25, 1, 1, '25', 0),
+(26, 1, 1, '25', 0),
+(26, 9, 1, '20', 0);
 
 -- --------------------------------------------------------
 
@@ -160,18 +163,22 @@ CREATE TABLE `tblklanten` (
   `klantid` int(11) NOT NULL,
   `naam` varchar(255) NOT NULL,
   `adres` varchar(255) NOT NULL,
-  `postcodeid` int(11) NOT NULL,
-  `email` varchar(255) NOT NULL
+  `postcodeid` int(11) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `wachtwoord` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `tblklanten`
 --
 
-INSERT INTO `tblklanten` (`klantid`, `naam`, `adres`, `postcodeid`, `email`) VALUES
-(1, 'Ayse Uckuyulu', 'Kortrijksesteenweg 12', 2, 'kendet@gmail.com'),
-(2, 'Pieter', 'Sesamstraat 1', 5, 'pieterjan@gmail.com'),
-(3, 'Testklant', 'Teststraat 1', 9000, 'test@klant.be');
+INSERT INTO `tblklanten` (`klantid`, `naam`, `adres`, `postcodeid`, `email`, `wachtwoord`) VALUES
+(1, 'Ayse Uckuyulu', 'Kortrijksesteenweg 12', 2, 'kendet@gmail.com', ''),
+(2, 'Pieter', 'Sesamstraat 1', 5, 'pieterjan@gmail.com', ''),
+(3, 'Testklant', 'Teststraat 1', 9000, 'test@klant.be', ''),
+(4, 'Selin', 'pieperstraat', 6, 'selin@gmail.com', 'selin123'),
+(5, 'celine', 'mielstraat', NULL, 'celine@gmail.com', '$2y$10$7POjy7MiEiEkOLXKpqefTOHxif8VLqHzbJrp01fa5ZimoAizF5eU.'),
+(6, 'Jantje', 'sesamstraat', NULL, 'jantje@gmail.com', '$2y$10$MUtYHeqlIJ8s414xGI349OcRKbO1VCEDyaaunhsh4AZvHXfj0f21C');
 
 -- --------------------------------------------------------
 
@@ -204,7 +211,7 @@ INSERT INTO `tblproducten` (`productid`, `titel`, `omschrijving`, `prijs`, `cate
 (7, 'Lord Of The Rings', 'Lord of the Rings: The Fellowship of the Ring is een epische fantasyfilm gebaseerd op de geliefde boeken van J.R.R. Tolkien. Volg de jonge hobbit Frodo Baggins terwijl hij samen met een diverse groep metgezellen op een gevaarlijke queeste gaat om de machtige Ene Ring te vernietigen. Dit spectaculaire avontuur zit vol magie, gevechten en diepe vriendschappen, en neemt je mee naar de betoverende wereld van Midden-aarde. Ontdek het begin van een tijdloos verhaal dat je verbeelding zal overtreffen.', 18.99, 7, 'lordoftherings.jpg', 3, 1),
 (8, 'The Substance', 'Met The Substance kun je een andere versie van jezelf genereren, jonger, mooier, perfecter. Deel gewoon de tijd. Een week voor de een, een week voor de ander. Een perfecte balans van zeven dagen.', 20.99, 8, 'substance.jpg', 4, 1),
 (9, 'Godzilla Minus One', 'Kort na de Tweede Wereldoorlog duikt er voor de kust van Tokio een gigantisch monster op. De deserteur Koichi, getraumatiseerd door zijn eerste confrontatie met Godzilla, ziet dit als een kans om zijn gedrag tijdens de oorlog te vergoeden.', 19.99, 9, 'godzilla.jpg', 2, 1),
-(10, 'Wicked', 'In WICKED maken we kennis met het nog onbekende verhaal van de Witches of Oz. Cynthia Erivo is te zien als als Elphaba, een jonge vrouw die zich onzeker voelt vanwege haar ongebruikelijke groene huid en die haar ware kracht nog moet ontdekken. Grammy-winnares en mondiale superster Ariana Grande speelt Glinda, een populaire, geprivilegieerde en ambitieuze jonge vrouw die er nog achter moet komen wie ze zelf echt is. De twee leren elkaar kennen als studenten aan de Shiz Universiteit in het magische Land van Oz en sluiten een onwaarschijnlijke maar innige vriendschap. Na een ontmoeting met de Wizard of Oz wordt hun vriendschap op de proef gesteld en zullen ze heel verschillende paden bewandelen.', 25.99, 5, 'wicked.jpg', 3, 4);
+(10, 'Wicked', 'In Wicked maken we kennis met het nog onbekende verhaal van de Witches of Oz. Cynthia Erivo is te zien als als Elphaba, een jonge vrouw die zich onzeker voelt vanwege haar ongebruikelijke groene huid en die haar ware kracht nog moet ontdekken. Grammy-winnares en mondiale superster Ariana Grande speelt Glinda, een populaire, geprivilegieerde en ambitieuze jonge vrouw die er nog achter moet komen wie ze zelf echt is. De twee leren elkaar kennen als studenten aan de Shiz Universiteit in het magische Land van Oz en sluiten een onwaarschijnlijke maar innige vriendschap. Na een ontmoeting met de Wizard of Oz wordt hun vriendschap op de proef gesteld en zullen ze heel verschillende paden bewandelen.', 25.99, 5, 'wicked.jpg', 3, 4);
 
 --
 -- Indexes for dumped tables
@@ -242,7 +249,7 @@ ALTER TABLE `tblproducten`
 -- AUTO_INCREMENT for table `tblbestellingen`
 --
 ALTER TABLE `tblbestellingen`
-  MODIFY `bestellingid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `bestellingid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 --
 -- AUTO_INCREMENT for table `tblcategorie`
 --
@@ -252,7 +259,7 @@ ALTER TABLE `tblcategorie`
 -- AUTO_INCREMENT for table `tblklanten`
 --
 ALTER TABLE `tblklanten`
-  MODIFY `klantid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `klantid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `tblproducten`
 --

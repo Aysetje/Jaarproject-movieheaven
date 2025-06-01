@@ -1,10 +1,6 @@
 <?php
 session_start();
-$mysqli = new MySQLI("localhost", "root", "", "movieheavenphp");
-
-if (mysqli_connect_errno()) {
-    trigger_error('Fout bij verbinding: ' . $mysqli->error);
-} else {
+require_once 'dbconnect.php';
 
     // Klant toevoegen
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['naam'])) {
@@ -65,7 +61,7 @@ if (mysqli_connect_errno()) {
     while ($row = $categorie_result->fetch_assoc()) {
         $categories[$row['categorieid']] = $row['categorie'];
     }
-}
+
 ?>
 
 
