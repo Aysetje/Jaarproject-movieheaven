@@ -44,7 +44,12 @@ $stmt->close();
 
 // Facturen ophalen
 $facturen = [];
-if (isset($_GET['vanaf']) && isset($_GET['tot'])) {
+if (!empty($_GET['zoekterm'])) {
+    $zoekterm = $_GET['zoekterm'];
+    $stmt = $mysqli->prepare("SELECT * FROM tblbestellingen WHERE klantid = ? AND bestellingid LIKE ?");
+    $like = "%$zoekterm%";
+    $stmt->bind_param("is", $klantid,$like);
+} elseif (isset($_GET['vanaf']) && isset($_GET['tot'])) {
     $vanaf = $_GET['vanaf'];
     $tot = $_GET['tot'];
     $stmt = $mysqli->prepare("SELECT * FROM tblbestellingen WHERE klantid = ? AND bestellingsdatum BETWEEN ? AND ?");
@@ -53,6 +58,7 @@ if (isset($_GET['vanaf']) && isset($_GET['tot'])) {
     $stmt = $mysqli->prepare("SELECT * FROM tblbestellingen WHERE klantid = ?");
     $stmt->bind_param("i", $klantid);
 }
+
 
 $stmt->execute();
 $result = $stmt->get_result();
@@ -194,7 +200,7 @@ body {
                                 <li><a href="./portfolio.php">Producten</a></li>
                                 
                                 <li ><a href="./contact.html">Contact</a></li>
-                                <li class="active"><a href="./login.php">Login</a></li>
+                                <li class="active"><a href="./login.php">Log out</a></li>
                             </ul>
                         </nav>
                        
@@ -219,7 +225,7 @@ body {
     <?php if ($success) echo "<p style='color:green;'>$success</p>"; ?>
     <?php if ($error) echo "<p style='color:red;'>$error</p>"; ?>
 
-    <h3>Eigen gegevens aanpassen</h3>
+    <h3>Gegevens aanpassen</h3>
     <form method="post">
         <input type="text" name="naam" value="<?php echo htmlspecialchars($naam); ?>" required><br>
         <input type="text" name="adres" value="<?php echo htmlspecialchars($adres); ?>" required><br>
@@ -227,14 +233,19 @@ body {
         <input type="password" name="wachtwoord" placeholder="Nieuw wachtwoord (optioneel)"><br>
         <button type="submit" name="update">Gegevens bijwerken</button>
     </form>
-
+<br>
+<h3>Zoeken op bestellingsnummer</h3>
+<form method="get">
+    <input type="text" name="zoekterm" placeholder="Factuurnummer of bestellingsnummer">
+    <button type="submit">Zoeken</button>
+</form><br>
     <h3>Facturen filteren op datum</h3>
     <form method="get">
-        Vanaf: <input type="date" name="vanaf" required>
-        Tot: <input type="date" name="tot" required>
+       <p style="text-align: left;"> Vanaf:</p> <input type="date" name="vanaf" required>
+       <p style="text-align: left;"> Tot: </p><input type="date" name="tot" required>
         <button type="submit">Filteren</button>
     </form>
-
+<br>
     <h3>Factuuroverzicht</h3>
     <?php if (count($facturen) > 0): ?>
         <table border="1">

@@ -39,7 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
     header("Location: adminDashboard.php");
     exit();
 }
-if ($zoekterm) {
+   $van = $_GET['van'] ?? '';
+$tot = $_GET['tot'] ?? '';
+
+if ($zoekterm  || ($van && $tot)) {
     $zoekterm_wild = "%$zoekterm%";
 
     // Klanten
@@ -57,11 +60,22 @@ if ($zoekterm) {
     $stmt->close();
 
     // Facturen
-    $stmt = $mysqli->prepare("SELECT bestellingid, klantid, bestellingsdatum, status FROM tblbestellingen WHERE bestellingid LIKE ? OR bestellingsdatum LIKE ?");
-    $stmt->bind_param("ss", $zoekterm_wild, $zoekterm_wild);
-    $stmt->execute();
-    $facturen = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
+ 
+if ($van && $tot) {
+        $stmt = $mysqli->prepare("SELECT bestellingid, klantid, bestellingsdatum, status FROM tblbestellingen WHERE bestellingsdatum BETWEEN ? AND ?");
+        $stmt->bind_param("ss", $van, $tot);
+    } elseif ($zoekterm) {
+        $stmt = $mysqli->prepare("SELECT bestellingid, klantid, bestellingsdatum, status FROM tblbestellingen WHERE bestellingid LIKE ? OR bestellingsdatum LIKE ?");
+        $stmt->bind_param("ss", $zoekterm_wild, $zoekterm_wild);
+    }
+
+    if (isset($stmt)) {
+        $stmt->execute();
+        $facturen = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+    } else {
+        $facturen = $mysqli->query("SELECT bestellingid, klantid, bestellingsdatum, status FROM tblbestellingen")->fetch_all(MYSQLI_ASSOC);
+    }
 } else {
     $klanten = $mysqli->query("SELECT klantid, naam, adres, email FROM tblklanten")->fetch_all(MYSQLI_ASSOC);
     $producten = $mysqli->query("SELECT productid, titel, omschrijving, prijs, aantalinvoorraad FROM tblproducten")->fetch_all(MYSQLI_ASSOC);
@@ -269,7 +283,7 @@ table button:hover {
                                 <li><a href="./portfolio.php">Producten</a></li>
                                 
                                 <li ><a href="./contact.html">Contact</a></li>
-                                <li class="active"><a href="./login.php">Login</a></li>
+                                <li class="active"><a href="./login.php">Log out</a></li>
                             </ul>
                         </nav>
                        
@@ -333,6 +347,15 @@ table button:hover {
     </tr>
         <?php endforeach; ?>
     </table>
+    <br>
+     <h3>Facturen filteren op datum</h3>
+<form method="get">
+    
+    <input type="date" name="van" value="<?= htmlspecialchars($_GET['van'] ?? '') ?>">
+    <input type="date" name="tot" value="<?= htmlspecialchars($_GET['tot'] ?? '') ?>">
+    <button type="submit">Zoeken</button>
+</form>
+
 
     <h2>Bestellingen</h2>
     <table>
