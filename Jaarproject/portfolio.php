@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 session_start();
 require_once 'dbconnect.php';
 
@@ -215,7 +213,7 @@ if ($mysqli->connect_errno) {
     <section class="work">
     <div class="container">
     <div class="col-12 text-center mt-4">
-    <a href="filmtoevoegen.php" class="btn btn-primary">Film Toevoegen</a>
+    
     
 
     <div class="row">
@@ -233,7 +231,6 @@ if ($mysqli->connect_errno) {
                 </a>
                 <form action="winkelwagen.php" method="POST">
     <input type="hidden" name="id" value="' . $film['productid'] . '">
-    <input type="number" name="aantal" value="1" min="1">
     <button type="submit" class="toevoegen-knop">➕</button>
 </form>
 

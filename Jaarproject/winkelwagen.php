@@ -1,8 +1,14 @@
 <?php
 session_start();
+if (!isset($_SESSION['gebruiker_id'])) {
+    echo "Je moet eerst inloggen!";
+    exit;
+}
+require_once 'dbconnect.php';
+
 
 $producten_in_winkelwagen = isset($_SESSION['winkelwagen']) ? $_SESSION['winkelwagen'] : [];
-require_once 'dbconnect.php';
+
 
 $totaalprijs = 0;
 
@@ -26,17 +32,42 @@ if (!empty($producten_in_winkelwagen)) {
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $productId = $_POST['id'];
-    $aantal = intval($_POST['aantal']);
+    if (isset($_POST['id'])) {
+        $productId = intval($_POST['id']);
 
-    
-    if ($aantal > 0) {
-        $_SESSION['winkelwagen'][$productId] = $aantal;
-    } else {
-        unset($_SESSION['winkelwagen'][$productId]); 
+        if (!isset($_SESSION['winkelwagen'])) {
+            $_SESSION['winkelwagen'] = [];
+        }
+
+        // Als product al in winkelwagen, verhoog aantal met 1, anders 1
+        if (isset($_SESSION['winkelwagen'][$productId])) {
+            $_SESSION['winkelwagen'][$productId]++;
+        } else {
+            $_SESSION['winkelwagen'][$productId] = 1;
+        }
+
+        // Redirect terug naar portfolio
+        header('Location: portfolio.php');
+        exit();
     }
-
-   
+    
+    
+    if (isset($_POST['aantal'])) {
+        foreach ($_POST['aantal'] as $productId => $aantal) {
+            $aantal = intval($aantal);
+            if ($aantal > 0) {
+                $_SESSION['winkelwagen'][$productId] = $aantal;
+            } else {
+                unset($_SESSION['winkelwagen'][$productId]);
+            }
+        }
+        header("Location: winkelwagen.php");
+        exit();
+    }
+}
+    
+if (isset($_GET['leeg'])) {
+    unset($_SESSION['winkelwagen']);
     header("Location: winkelwagen.php");
     exit();
 }
@@ -222,14 +253,7 @@ h1 {
 </form>
 
 <a href="winkelwagen.php?leeg=true" class="btn btn-danger" style="margin-left:200px;">Winkelwagen leegmaken</a>
-<?php
-if (isset($_GET['leeg'])) {
-    unset($_SESSION['winkelwagen']);
-    header("Location: winkelwagen.php");
-    exit();
-}
 
-?>
         <h3 style="margin-left:1300px;">Totaal: €<?php echo number_format($totaalprijs, 2, ',', '.'); ?></h3>
         <br>
         <a href="afrekenen.php" class="btn btn-primary" style="margin-left:1300px;">Verder naar afrekenen</a><br><br>

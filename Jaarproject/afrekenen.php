@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['gebruiker_id'])) {
+    echo "Je moet eerst inloggen!";
+    exit;
+}
 
 if (empty($_SESSION['winkelwagen'])) {
     echo "<p>Je winkelwagen is leeg. <a href='portfolio.php'>Ga terug</a></p>";
@@ -8,30 +12,15 @@ if (empty($_SESSION['winkelwagen'])) {
 
 require_once 'dbconnect.php';
 
-$naam = "Testklant";
-$adres = "Teststraat 1";
-$postcodeid = 9000;
-$email = "test@klant.be";
-
-// Klant zoeken of toevoegen
-$sql = "SELECT klantid FROM tblklanten WHERE email = ?";
-$stmt = $mysqli->prepare($sql);
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$stmt->store_result();
-
-if ($stmt->num_rows > 0) {
-    $stmt->bind_result($klantid);
-    $stmt->fetch();
-} else {
-    $stmt->close();
-    $sql = "INSERT INTO tblklanten (naam, adres, postcodeid, email) VALUES (?, ?, ?, ?)";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("ssis", $naam, $adres, $postcodeid, $email);
-    $stmt->execute();
-    $klantid = $stmt->insert_id;
+// Check of klant ingelogd is
+if (!isset($_SESSION['gebruiker_id'])) {
+    echo "<p>Je moet ingelogd zijn om af te rekenen. <a href='login.php'>Login</a></p>";
+    exit;
 }
-$stmt->close();
+
+$klantid = $_SESSION['gebruiker_id'];
+
+
 
 // Bestelling toevoegen
 $sql = "INSERT INTO tblbestellingen (klantid, status, bestellingsdatum) VALUES (?, 'Voltooid', NOW())";
@@ -43,6 +32,7 @@ $stmt->close();
 
 // Winkelwagen verwerken
 $totaalprijs = 0;
+
 ?>
 <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap"
@@ -188,12 +178,12 @@ $totaalprijs = 0;
                 $foto = $product['foto'];
                 $subtotaal = $prijs * $aantal;
                 $totaalprijs += $subtotaal;
-
+                
                 // Opslaan in bestellingslijnen
                 $korting = 0;
                 $sqlLijn = "INSERT INTO tblbestellingslijnen (bestellingsid, productid, aantal, korting, verkoopprijs) VALUES (?, ?, ?, ?, ?)";
                 $stmtLijn = $mysqli->prepare($sqlLijn);
-                $stmtLijn->bind_param("iiidd", $bestellingsid, $productid, $aantal, $korting, $prijs);
+                $stmtLijn->bind_param("iiiid", $bestellingsid, $productid, $aantal, $korting, $prijs);
                 $stmtLijn->execute();
                 $stmtLijn->close();
                 ?>
@@ -206,6 +196,7 @@ $totaalprijs = 0;
                 </tr>
                 <?php
             }
+            $_SESSION['totaal'] = $totaalprijs;
             ?>
         </tbody>
     </table>
