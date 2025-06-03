@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 01, 2025 at 04:09 PM
+-- Generation Time: Jun 03, 2025 at 11:42 PM
 -- Server version: 5.7.17
 -- PHP Version: 7.4.27
 
@@ -65,7 +65,15 @@ INSERT INTO `tblbestellingen` (`bestellingid`, `klantid`, `bestellingsdatum`, `s
 (23, 3, '2025-05-08', 'Voltooid'),
 (24, 3, '2025-05-09', 'Voltooid'),
 (25, 3, '2025-05-09', 'Voltooid'),
-(26, 3, '2025-06-01', 'Voltooid');
+(26, 3, '2025-06-01', 'Voltooid'),
+(27, 5, '2025-06-03', 'Voltooid'),
+(28, 6, '2025-06-03', 'Voltooid'),
+(29, 6, '2025-06-03', 'Voltooid'),
+(30, 6, '2025-06-03', 'Voltooid'),
+(31, 6, '2025-06-03', 'Voltooid'),
+(32, 6, '2025-06-03', 'Voltooid'),
+(33, 6, '2025-06-03', 'Voltooid'),
+(34, 6, '2025-06-03', 'Voltooid');
 
 -- --------------------------------------------------------
 
@@ -77,7 +85,7 @@ CREATE TABLE `tblbestellingslijnen` (
   `bestellingsid` int(11) NOT NULL,
   `productid` int(11) NOT NULL,
   `aantal` int(11) NOT NULL,
-  `verkoopprijs` decimal(10,0) NOT NULL,
+  `verkoopprijs` double NOT NULL,
   `korting` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -86,45 +94,54 @@ CREATE TABLE `tblbestellingslijnen` (
 --
 
 INSERT INTO `tblbestellingslijnen` (`bestellingsid`, `productid`, `aantal`, `verkoopprijs`, `korting`) VALUES
-(7, 1, 2, '25', 0),
-(7, 4, 1, '11', 0),
-(7, 9, 1, '20', 0),
-(8, 6, 1, '25', 0),
-(8, 7, 1, '19', 0),
-(8, 3, 1, '23', 0),
-(8, 5, 2, '16', 0),
-(9, 9, 1, '20', 0),
-(10, 4, 1, '11', 0),
-(11, 4, 1, '11', 0),
-(11, 1, 2, '25', 0),
-(12, 4, 1, '11', 0),
-(12, 1, 2, '25', 0),
-(13, 4, 1, '11', 0),
-(13, 1, 2, '25', 0),
-(14, 4, 1, '11', 0),
-(14, 1, 2, '25', 0),
-(15, 4, 1, '11', 0),
-(15, 1, 2, '25', 0),
-(16, 4, 1, '11', 0),
-(16, 1, 2, '25', 0),
-(17, 4, 1, '11', 0),
-(17, 1, 2, '25', 0),
-(18, 4, 1, '11', 0),
-(18, 1, 2, '25', 0),
-(19, 4, 1, '11', 0),
-(19, 1, 2, '25', 0),
-(20, 4, 1, '11', 0),
-(20, 1, 2, '25', 0),
-(21, 4, 1, '11', 0),
-(21, 1, 2, '25', 0),
-(22, 4, 1, '11', 0),
-(22, 1, 2, '25', 0),
-(23, 9, 3, '20', 0),
-(24, 1, 1, '25', 0),
-(24, 6, 1, '25', 0),
-(25, 1, 1, '25', 0),
-(26, 1, 1, '25', 0),
-(26, 9, 1, '20', 0);
+(7, 1, 2, 25, 0),
+(7, 4, 1, 11, 0),
+(7, 9, 1, 20, 0),
+(8, 6, 1, 25, 0),
+(8, 7, 1, 19, 0),
+(8, 3, 1, 23, 0),
+(8, 5, 2, 16, 0),
+(9, 9, 1, 20, 0),
+(10, 4, 1, 11, 0),
+(11, 4, 1, 11, 0),
+(11, 1, 2, 25, 0),
+(12, 4, 1, 11, 0),
+(12, 1, 2, 25, 0),
+(13, 4, 1, 11, 0),
+(13, 1, 2, 25, 0),
+(14, 4, 1, 11, 0),
+(14, 1, 2, 25, 0),
+(15, 4, 1, 11, 0),
+(15, 1, 2, 25, 0),
+(16, 4, 1, 11, 0),
+(16, 1, 2, 25, 0),
+(17, 4, 1, 11, 0),
+(17, 1, 2, 25, 0),
+(18, 4, 1, 11, 0),
+(18, 1, 2, 25, 0),
+(19, 4, 1, 11, 0),
+(19, 1, 2, 25, 0),
+(20, 4, 1, 11, 0),
+(20, 1, 2, 25, 0),
+(21, 4, 1, 11, 0),
+(21, 1, 2, 25, 0),
+(22, 4, 1, 11, 0),
+(22, 1, 2, 25, 0),
+(23, 9, 3, 20, 0),
+(24, 1, 1, 25, 0),
+(24, 6, 1, 25, 0),
+(25, 1, 1, 25, 0),
+(26, 1, 1, 25, 0),
+(26, 9, 1, 20, 0),
+(27, 9, 4, 20, 0),
+(28, 7, 1, 19, 0),
+(28, 3, 1, 23, 0),
+(29, 9, 1, 20, 0),
+(30, 4, 1, 11, 0),
+(31, 9, 1, 20, 0),
+(32, 4, 1, 11, 0),
+(33, 5, 1, 16, 0),
+(34, 3, 1, 22.99, 0);
 
 -- --------------------------------------------------------
 
@@ -193,7 +210,7 @@ CREATE TABLE `tblproducten` (
   `prijs` double DEFAULT NULL,
   `categorieid` int(11) NOT NULL,
   `foto` text NOT NULL,
-  `beoordeling` int(11) NOT NULL,
+  `beoordeling` int(11) DEFAULT NULL,
   `aantalinvoorraad` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -249,7 +266,7 @@ ALTER TABLE `tblproducten`
 -- AUTO_INCREMENT for table `tblbestellingen`
 --
 ALTER TABLE `tblbestellingen`
-  MODIFY `bestellingid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `bestellingid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 --
 -- AUTO_INCREMENT for table `tblcategorie`
 --
@@ -264,7 +281,7 @@ ALTER TABLE `tblklanten`
 -- AUTO_INCREMENT for table `tblproducten`
 --
 ALTER TABLE `tblproducten`
-  MODIFY `productid` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;COMMIT;
+  MODIFY `productid` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
