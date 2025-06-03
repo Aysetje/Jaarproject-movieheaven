@@ -132,22 +132,32 @@ body {
     margin-top: 10px;
 }
    
-                input, button { 
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            background: #333;
-            color: #fff;
-        }
-        button { background-color: #ff4c4c; cursor: pointer; }
-        button:hover { background-color: #ff1f1f; }
-        .message { color: red; }
-        .success { color: purple; }
+input, button { 
+width: 100%;
+padding: 10px;
+margin: 10px 0;
+border: none;
+border-radius: 5px;
+font-size: 16px;
+background: #333;
+color: #fff;
+}
+button { background-color: #ff4c4c; cursor: pointer; }
+button:hover { background-color: #ff1f1f; }
+.message { color: red; }
+.success { color: purple; }
         
+th, td {
+    padding: 10px;
+    border: 1px solid #444;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
 
+}
+table{
+    width: 100%;
+}
     </style>
     <meta charset="UTF-8">
     <meta name="description" content="Homepage">
@@ -242,16 +252,26 @@ body {
     </form>
 <br>
     <h3>Factuuroverzicht</h3>
+    <br>
     <?php if (count($facturen) > 0): ?>
         <table border="1">
-            <tr><th>Factuurnr</th><th>Datum</th><th>Bedrag</th></tr>
+            <tr><th>Factuurnr</th><th>Datum</th><th>Status</th><th>Bedrag</th></tr>
             <?php foreach ($facturen as $factuur): ?>
-                <tr>
-                    <td><?= $factuur['factuurid']; ?></td>
-                    <td><?= $factuur['datum']; ?></td>
-                    <td>€<?= number_format($factuur['bedrag'], 2); ?></td>
-                </tr>
-            <?php endforeach; ?>
+            <tr>
+                <td><?= $factuur['bestellingid']; ?></td>
+                <td><?= $factuur['bestellingsdatum']; ?></td>
+                <td><?= $factuur['status']; ?></td>
+                <?php
+                $stmt_totaal = $mysqli->prepare("SELECT SUM(verkoopprijs * aantal) AS totaal FROM tblbestellingslijnen WHERE bestellingsid = ?");
+                $stmt_totaal->bind_param("i", $factuur['bestellingid']);
+                $stmt_totaal->execute();
+                $stmt_totaal->bind_result($totaal);
+                $stmt_totaal->fetch();
+                $stmt_totaal->close();
+                ?>
+                <td>€<?= number_format($totaal ?? 0, 2); ?></td>
+         </tr>
+<?php endforeach; ?>
         </table>
     <?php else: ?>
         <p>Geen facturen gevonden.</p>

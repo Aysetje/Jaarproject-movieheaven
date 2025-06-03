@@ -34,6 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Ongeldige gebruikersnaam of wachtwoord.";
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="zxx">
@@ -153,6 +154,7 @@ body {
                                 
                                 <li ><a href="./contact.html">Contact</a></li>
                                 <li class="active"><a href="./login.php">Login</a></li>
+                                <li><a href="./winkelwagen.php">Winkelwagen</a></li>
                             </ul>
                         </nav>
                        

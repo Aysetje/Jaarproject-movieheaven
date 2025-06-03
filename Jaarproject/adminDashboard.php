@@ -34,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
     header("Location: adminDashboard.php");
     exit();
 }
+
+
    $van = $_GET['van'] ?? '';
 $tot = $_GET['tot'] ?? '';
 
@@ -48,7 +50,7 @@ if ($zoekterm  || ($van && $tot)) {
     $stmt->close();
 
     // Producten
-    $stmt = $mysqli->prepare("SELECT productid, titel, omschrijving, prijs, aantalinvoorraad FROM tblproducten WHERE titel LIKE ?");
+    $stmt = $mysqli->prepare("SELECT productid,foto, titel, omschrijving, prijs, aantalinvoorraad FROM tblproducten WHERE titel LIKE ?");
     $stmt->bind_param("s", $zoekterm_wild);
     $stmt->execute();
     $producten = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -73,10 +75,79 @@ if ($van && $tot) {
     }
 } else {
     $klanten = $mysqli->query("SELECT klantid, naam, adres, email FROM tblklanten")->fetch_all(MYSQLI_ASSOC);
-    $producten = $mysqli->query("SELECT productid, titel, omschrijving, prijs, aantalinvoorraad FROM tblproducten")->fetch_all(MYSQLI_ASSOC);
+    $producten = $mysqli->query("SELECT productid, foto,titel, omschrijving, prijs, aantalinvoorraad FROM tblproducten")->fetch_all(MYSQLI_ASSOC);
     $facturen = $mysqli->query("SELECT bestellingid, klantid, bestellingsdatum, status FROM tblbestellingen")->fetch_all(MYSQLI_ASSOC);
 }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nieuw_product_toevoegen'])) {
+    $titel = $_POST['nieuw_titel'];
+    $omschrijving = $_POST['nieuw_omschrijving'];
+    $prijs = $_POST['nieuw_prijs'];
+    $voorraad = $_POST['nieuw_voorraad'];
+    $categorie = $_POST['categorieid'];
 
+    // Bestand uploaden
+    $foto_naam = $_FILES['nieuw_foto']['name'];
+    $foto_tmp = $_FILES['nieuw_foto']['tmp_name'];
+    $foto_map = 'uploads/';
+    $foto_pad = $foto_map . basename($foto_naam);
+
+    if (move_uploaded_file($foto_tmp, $foto_pad)) {
+       if ($stmt = $mysqli->prepare("INSERT INTO tblproducten (foto, titel, omschrijving, prijs, aantalinvoorraad, categorieid) VALUES (?, ?, ?, ?, ?,?)")) {
+    $stmt->bind_param("sssdii", $foto_naam, $titel, $omschrijving, $prijs, $voorraad,$categorie);
+    if ($stmt->execute()) {
+        header("Location: adminDashboard.php");
+        exit();
+    } else {
+        echo "<p class='message'>Fout bij uitvoeren van query: " . $stmt->error . "</p>";
+    }
+    $stmt->close();
+} else {
+    echo "<p class='message'>Fout bij voorbereiden van query: " . $mysqli->error . "</p>";
+}
+    } else {
+        echo "<p class='message'>Uploaden van afbeelding mislukt.</p>";
+    }
+}
+$categories = [];
+$sql = "SELECT categorieid, categorie FROM tblcategorie";
+$result = $mysqli->query($sql);
+
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $categories[$row['categorieid']] = $row['categorie'];
+    }
+    $result->free();
+} else {
+    die("Fout bij ophalen van categorieën: " . $mysqli->error);
+}
+
+$zoek_klantnaam = $_GET['zoek_klantnaam'] ?? '';
+
+if (!empty($zoek_klantnaam)) {
+    $zoek_klantnaam_wild = '%' . $zoek_klantnaam . '%';
+    
+    if ($van && $tot) {
+        $stmt = $mysqli->prepare("
+            SELECT b.bestellingid, b.klantid, b.bestellingsdatum, b.status, k.naam 
+            FROM tblbestellingen b
+            JOIN tblklanten k ON b.klantid = k.klantid
+            WHERE k.naam LIKE ? AND b.bestellingsdatum BETWEEN ? AND ?
+        ");
+        $stmt->bind_param("sss", $zoek_klantnaam_wild, $van, $tot);
+    } else {
+        $stmt = $mysqli->prepare("
+            SELECT b.bestellingid, b.klantid, b.bestellingsdatum, b.status, k.naam 
+            FROM tblbestellingen b
+            JOIN tblklanten k ON b.klantid = k.klantid
+            WHERE k.naam LIKE ?
+        ");
+        $stmt->bind_param("s", $zoek_klantnaam_wild);
+    }
+
+    $stmt->execute();
+    $facturen = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+}
 
 ?>
 
@@ -180,12 +251,15 @@ th, td {
     text-align: center;
     vertical-align: middle;
     color: white;
+    
 }
 
 
 table input[type="text"],
 table input[type="email"],
-table input[type="number"] {
+table input[type="number"],
+textarea[name="nieuw_omschrijving"],
+select[name="categorieid"]{
     width: 100%;
     padding: 6px;
     box-sizing: border-box;
@@ -325,40 +399,75 @@ table button:hover {
     </table>
   <h2>Producten</h2>
     <table>
-        <tr><th>ID</th><th>Titel</th><th>Omschrijving</th><th>Prijs (€)</th><th>Voorraad</th></tr>
-        <?php foreach ($producten as $product): ?>
-        <tr>
-        <form method="post" class="inline">
-            <td><?= $product['productid'] ?></td>
-            <td><input type="text" name="titel" value="<?= htmlspecialchars($product['titel']) ?>"></td>
-            <td><textarea name="omschrijving"><?= htmlspecialchars($product['omschrijving']) ?></textarea></td>
-            <td><input type="number" step="0.01" name="prijs" value="<?= htmlspecialchars($product['prijs']) ?>"></td>
-            <td>
-                <input type="number" name="voorraad" value="<?= $product['aantalinvoorraad'] ?>">
-                <input type="hidden" name="productid" value="<?= $product['productid'] ?>">
-                <button type="submit" name="update_product">Bijwerken</button>
-            </td>
-        </form>
-    </tr>
-        <?php endforeach; ?>
-    </table>
-    <br>
-     <h3>Facturen filteren op datum</h3>
-<form method="get">
+        <tr><th>ID</th><th>Foto</th><th>Titel</th><th>Omschrijving</th><th>Prijs (€)</th><th>Voorraad</th></tr>
+            <?php foreach ($producten as $product): ?>
+            <tr>
+            <form method="post" class="inline" >
+                <td><?= $product['productid'] ?></td>
+                 <td><img src="uploads/<?= htmlspecialchars($product['foto']) ?>" alt="foto" width="60"></td>
+                <td><input type="text" name="titel" value="<?= htmlspecialchars($product['titel']) ?>"></td>
+                <td><textarea name="omschrijving"><?= htmlspecialchars($product['omschrijving']) ?></textarea></td>
+                <td><input type="number" step="0.01" name="prijs" value="<?= htmlspecialchars($product['prijs']) ?>"></td>
+                <td>
+                    <input type="number" name="voorraad" value="<?= $product['aantalinvoorraad'] ?>">
+                    <input type="hidden" name="productid" value="<?= $product['productid'] ?>">
+                    <button type="submit" name="update_product">Bijwerken</button>
+                </td>
+                
+        
     
+        </form>
+        </tr>
+        <?php endforeach; ?>
+            </table>
+            <h2>Nieuw product toevoegen</h2>
+        <form method="post" enctype="multipart/form-data">
+            <input type="text" name="nieuw_titel" placeholder="Titel" required>
+            <textarea name="nieuw_omschrijving" placeholder="Omschrijving" required></textarea>
+            <input type="number" step="0.01" name="nieuw_prijs" placeholder="Prijs" required>
+            <input type="number" name="nieuw_voorraad" placeholder="Voorraad" required>
+            <input type="file" name="nieuw_foto" accept="uploads/*" required>
+            
+        
+        <select id="categorieid" name="categorieid" required>
+            <?php
+           
+            
+            foreach ($categories as $key => $value) {
+                echo "<option value='$key'>$value</option>";
+            }
+            ?>
+        </select>
+        <br><br>
+            <button type="submit" name="nieuw_product_toevoegen">Toevoegen</button>
+        </form>
+
+    <br>
+     <h3>Facturen zoeken</h3>
+    <form method="get">
+    <input type="text" name="zoek_klantnaam" placeholder="Zoek op klantnaam" value="<?= htmlspecialchars($_GET['zoek_klantnaam'] ?? '') ?>">
     <input type="date" name="van" value="<?= htmlspecialchars($_GET['van'] ?? '') ?>">
     <input type="date" name="tot" value="<?= htmlspecialchars($_GET['tot'] ?? '') ?>">
-    <button type="submit">Zoeken</button>
+    <button type="submit">Zoek</button>
 </form>
 
 
     <h2>Bestellingen</h2>
     <table>
-        <tr><th>Bestelling ID</th><th>Klant ID</th><th>Datum</th><th>Status</th></tr>
+        <tr><th>Bestelling ID</th><th>Klant ID</th><th>Klantnaam</th><th>Datum</th><th>Status</th></tr>
         <?php foreach ($facturen as $factuur): ?>
         <tr>
             <td><?= $factuur['bestellingid'] ?></td>
             <td><?= $factuur['klantid'] ?></td>
+            <?php
+                $stmt_totaal = $mysqli->prepare("SELECT naam FROM tblklanten WHERE klantid = ?");
+                $stmt_totaal->bind_param("i", $factuur['klantid']);
+                $stmt_totaal->execute();
+                $stmt_totaal->bind_result($klant);
+                $stmt_totaal->fetch();
+                $stmt_totaal->close();
+                ?>
+            <td><?=  htmlspecialchars($klant)?></td>
             <td><?= $factuur['bestellingsdatum'] ?></td>
             <td><?= htmlspecialchars($factuur['status']) ?></td>
         </tr>

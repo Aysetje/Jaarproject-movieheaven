@@ -146,7 +146,7 @@ header {
                     <p><strong>Prijs:</strong> €<?php echo $prijs; ?></p>
                     <p><strong>Omschrijving:</strong> <?php echo $omschrijving; ?></p>
                     <p><strong>Beoordeling:</strong> <?php echo $beoordeling; ?> / 5</p>
-         </p><?php echo '<a href="filmwijzigen.php?id=' . $productid . '" class="btn btn-primary">Film Wijzigen</a>'; ?>
+        
                 </div>
             </div>
         </div>
